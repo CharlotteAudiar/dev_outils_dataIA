@@ -1,0 +1,21 @@
+# Source canonique de la liste des serveurs MCP.
+# Les fichiers config/*.example.json sont dérivés de ce fichier.
+
+servers:
+  mcp-qgis:
+    command: "python"
+    args: ["-m", "mcp_qgis"]
+    env:
+      QGIS_PROJECT_PATH: "${QGIS_PROJECT_PATH}"
+
+  mcp-filesystem:
+    command: "node"
+    args: ["servers/mcp-filesystem/src/index.js"]
+    env:
+      ALLOWED_ROOT: "${ALLOWED_ROOT}"
+
+  mcp-postgres:
+    command: "python"
+    args: ["-m", "mcp_postgres"]
+    env:
+      DATABASE_URL: "${DATABASE_URL}"

@@ -1,0 +1,50 @@
+# Dossiers exclus
+
+draft/
+
+# Variables d'environnement
+.env
+
+# Environnement virtuel
+.venv/
+venv/
+
+# Config IA
+CLAUDE.local.md
+.cursor/mcp.json
+
+# Cache python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node.js
+node_modules/
+
+# Build / cache
+dist/
+build/
+.cache/
+*.egg-info/
+
+# OS
+.DS_Store      # macOS
+Thumbs.db      # cache miniatures Windows
+Desktop.ini    # configuration dossiers Windows
+
+# Logs
+*.log
+
+# Cache VS Code
+.vscode/
+
+# Fichiers temporaires
+*.tmp
+*.bak
+
+# Fichiers temporaires Microsoft
+~$*
+
+# Raccourcis Window
+*.lnk
