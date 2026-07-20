@@ -3,10 +3,15 @@
 
 servers:
   mcp-qgis:
-    command: "python"
-    args: ["-m", "mcp_qgis"]
+    # Cf. servers/mcp-qgis/README.md — nkarasiak/qgis-mcp, pas de "python -m mcp_qgis" (n'existe pas).
+    # Exposé via mcpo (proxy MCP -> OpenAPI), quel que soit le déploiement Open WebUI visé
+    # (poste local ou instance mutualisée) : voir servers/mcp-qgis/README.md pour la commande
+    # mcpo complète et la configuration côté Open WebUI (type OpenAPI, pas MCP natif).
+    command: "uvx"
+    args: ["--from", "git+https://github.com/nkarasiak/qgis-mcp", "qgis-mcp-server"]
     env:
-      QGIS_PROJECT_PATH: "${QGIS_PROJECT_PATH}"
+      QGIS_MCP_HOST: "localhost"
+      QGIS_MCP_PORT: "9876"
 
   mcp-filesystem:
     command: "node"

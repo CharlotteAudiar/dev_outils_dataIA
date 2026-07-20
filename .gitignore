@@ -1,6 +1,7 @@
 # Dossiers exclus
 
 draft/
+old/
 
 # Variables d'environnement
 .env

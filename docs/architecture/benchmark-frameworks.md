@@ -1,6 +1,6 @@
-# Architecture
+# Benchmark des frameworks et serveurs MCP candidats
 
-Décisions techniques (ADR) et schémas d'infrastructure du projet.
+Recherche comparative ayant nourri les décisions documentées dans `decision-framework.md` (même dossier). Ce fichier ne contient que la matière de recherche brute (comparatifs, sources) — pas les décisions elles-mêmes.
 
 ## Framework d'orchestration candidats
 
@@ -42,25 +42,9 @@ Tableau transposé (critères en lignes, outils en colonnes).
 
 **Écarté du comparatif** : Roo Code, un fork de Cline pourtant bien noté, **archivé en mai 2026** (abandon de la maintenance) ; Kilo Code (fusion Cline + Roo Code), écarté à ce stade car produit récent porté par une startup financée, sans le recul de maturité des autres candidats — à surveiller. OpenHands a été réexaminé à la demande de Charlotte et **ajouté** au tableau ci-dessus (raison de l'écart initial : trop spécialisé développement logiciel/cloud — conservée en "Inconvénients" plutôt qu'en exclusion). Voir aussi la liste des candidats identifiés mais écartés en tête de section (OpenClaw, Suna, AIDotNet/OpenCowork, Kuse Cowork).
 
-## Décision — Framework retenu : Open WebUI Audiar (instance à créer)
-
-**Décision (20/07/2026)** : pour l'usage courant (catalogue, appels d'outils MCP dont QGIS en mode hybride — cf. `servers/mcp-qgis/README.md`), le framework retenu est **Open WebUI** ("Open WebUI Audiar" une fois l'instance créée et personnalisée), plutôt qu'un nouveau candidat du tableau ci-dessus. Aucune instance Open WebUI n'existe encore chez Audiar à ce stade — elle est à créer, en commençant par une installation locale sur le poste de Charlotte (prototype, voir `docs/guides.md`), avant d'envisager un hébergement partagé pour plusieurs chargés d'études. Justification par critère :
-
-- **Effort de développement** : plus faible que les 10 autres candidats du tableau, mais pas nul — l'instance est à créer (voir `docs/guides.md`, pas-à-pas d'installation locale via Docker). Reste ensuite à connecter les serveurs MCP métier, via le proxy `mcpo` (MCP → OpenAPI) — voir `servers/mcp-qgis/README.md` pour le détail et la justification de ce choix. Contrairement à un développement sur-mesure (cf. section briques d'orchestration ci-dessous), il n'y a rien à coder : seulement à déployer et configurer des outils existants.
-- **Documentation** : documentation officielle complète et à jour (docs.openwebui.com), section dédiée à l'extensibilité MCP (docs.openwebui.com/features/extensibility/mcp/), large communauté donc bon niveau de tutoriels/retours d'expérience tiers.
-- **Facilité d'utilisation** : interface de chat déjà connue en interne par les chargés d'études (outil existant, pas un nouvel outil à apprendre) ; prise en main immédiate pour l'usage courant (chat/RAG). La configuration MCP/agentique reste du ressort de l'administrateur, transparente pour l'utilisateur final une fois en place.
-- **Outils paramétrables** : compatibilité MCP native depuis la v0.6.31, ou via le proxy `mcpo` (MCP → OpenAPI) sur les versions antérieures ; pipelines/"functions" Python + large écosystème de plugins communautaires pour étendre au-delà du MCP.
-- **Gestion mémoire** : historique des conversations persistant côté serveur + RAG documentaire intégré — pertinent pour le cas d'usage 1 (connaissance du catalogue Audiar).
-- **Gouvernance multi-utilisateurs** : RBAC natif, groupes, SSO possible — un des points les plus mûrs du comparatif, nécessaire pour un déploiement à plusieurs chargés d'études (contrairement aux outils mono-utilisateur comme Goose ou VS Code + Cline).
-- **Souveraineté** : self-hosted par construction (déjà le cas pour l'instance Audiar), compatible Ollama et tout endpoint API OpenAI — cohérent avec la contrainte de sobriété/souveraineté des données (RAGaRenn/OVH Cloud).
-
-**Point de vigilance conservé** (déjà noté dans le tableau ci-dessus) : la licence "Open WebUI License" n'est plus certifiée OSI depuis la v0.6.6 (BSD 3-Clause + clause de marque) — à surveiller si l'agence a une politique stricte sur les licences ; des discussions de fork ont déjà eu lieu dans la communauté à ce sujet, sans qu'un fork dominant et pérenne ne se soit encore imposé à ce jour.
-
-**Limite assumée** : le "mode projet" d'Open WebUI reste plus faible que des candidats comme Goose, Eigent ou Open Cowork (pas d'exécution autonome multi-étapes native, dépend du proxy `mcpo` pour l'agentique). Ce choix couvre l'usage courant (chat, catalogue, appels d'outils MCP dont QGIS en mode hybride) ; à réévaluer si un besoin d'agent autonome de type Cowork sur un dossier de travail complet devient prioritaire.
-
 ## Briques d'orchestration pour un développement sur-mesure (écarté à ce stade)
 
-Six bibliothèques/SDK signalés par Charlotte le 20/07/2026 : **LangChain**, **LangGraph**, **CrewAI**, **AutoGen**, **Semantic Kernel**, **Haystack**. Contrairement aux onze candidats du tableau ci-dessus, ce ne sont pas des applications prêtes à l'emploi avec une interface "mode projet" : ce sont des briques de code qu'un développeur assemble pour construire lui-même un agent (interface, gestion de la mémoire, des droits, de la traçabilité — tout reste à écrire). Adopter l'une d'elles reviendrait à l'approche "développement Python sur-mesure" déjà explicitement écartée dans ce document au profit de solutions déployables telles quelles. Elles sont documentées ici pour mémoire, pas comme candidats actifs.
+Six bibliothèques/SDK signalés par Charlotte le 20/07/2026 : **LangChain**, **LangGraph**, **CrewAI**, **AutoGen**, **Semantic Kernel**, **Haystack**. Contrairement aux onze candidats du tableau ci-dessus, ce ne sont pas des applications prêtes à l'emploi avec une interface "mode projet" : ce sont des briques de code qu'un développeur assemble pour construire lui-même un agent (interface, gestion de la mémoire, des droits, de la traçabilité — tout reste à écrire). Adopter l'une d'elles reviendrait à l'approche "développement Python sur-mesure" déjà explicitement écartée au profit de solutions déployables telles quelles. Elles sont documentées ici pour mémoire, pas comme candidats actifs.
 
 | Framework | Repo | Licence | Auteur | Pérennité | Nature |
 |---|---|---|---|---|---|
@@ -75,7 +59,7 @@ Six bibliothèques/SDK signalés par Charlotte le 20/07/2026 : **LangChain**, **
 
 ## Serveurs MCP candidats
 
-Recensement des implémentations existantes évaluées pour chaque serveur MCP métier, avant décision finale (à documenter dans `servers/mcp-*/README.md` une fois le choix arrêté). Deux candidats par serveur quand plusieurs options sérieuses existent.
+Recensement des implémentations existantes évaluées pour chaque serveur MCP métier, avant décision finale (décisions documentées dans `decision-framework.md` et dans `servers/mcp-*/README.md` une fois le choix arrêté). Deux candidats par serveur quand plusieurs options sérieuses existent.
 
 Indicateurs de pérennité relevés le 17/07/2026 (étoiles, forks, dernière release/activité) — à vérifier à nouveau avant décision finale, ces chiffres évoluent vite.
 
@@ -84,13 +68,7 @@ Indicateurs de pérennité relevés le 17/07/2026 (étoiles, forks, dernière re
 | Candidat | Repo | Notes | Pérennité |
 |---|---|---|---|
 | jjsantos01/qgis_mcp | https://github.com/jjsantos01/qgis_mcp | Implémentation d'origine. Plugin QGIS (socket server) + serveur MCP Python en face. Référencé dans le plugin officiel QGIS ([plugins.qgis.org](https://plugins.qgis.org/plugins/qgis_mcp_plugin/)). | 949 ★, 151 forks, 13 commits, **aucune release taguée**. |
-| **nkarasiak/qgis-mcp** — **candidat retenu (20/07/2026)** | https://github.com/nkarasiak/qgis-mcp | Fork/variante avec capacités étendues (100+ outils MCP vs ~15 pour l'original). Déjà installé par Charlotte en v0.5.0 ; version stable disponible : v0.7.0 (16/07/2026) — mise à jour recommandée avant industrialisation. | Rythme de publication soutenu malgré moins d'étoiles que l'original (chiffres à revérifier depuis le relevé du 17/07/2026). |
-
-**Décision (20/07/2026)** : usage **hybride** retenu — les chargés d'études continuent à manipuler QGIS Desktop à la main, avec la possibilité de solliciter l'IA sur la session en cours (même projet ouvert, mêmes couches). Le plugin nkarasiak/qgis-mcp agit directement sur le projet ouvert à l'écran (pas une instance QGIS séparée/headless), ce qui est compatible avec ce mode hybride — raison principale du choix par rapport à jjsantos01/qgis_mcp.
-
-Montage technique retenu, quel que soit le déploiement Open WebUI (poste local ou instance mutualisée) : `qgis-mcp-server` exposé via **`mcpo`** (proxy MCP → OpenAPI), connecté à Open WebUI en tant que serveur d'outils OpenAPI plutôt qu'en MCP natif. Détail complet du montage (3 pièces), justification de ce choix, et checklist avant déploiement mutualisé : voir `servers/mcp-qgis/README.md`.
-
-Hors périmètre pour l'instant : QGIS Server (API WMS/WFS/WPS) pour des traitements géospatiaux standardisés/batch sans interaction avec la session ouverte — alternative secondaire, nécessiterait une brique d'infrastructure séparée à évaluer si ce besoin émerge.
+| **nkarasiak/qgis-mcp** — **candidat retenu (20/07/2026)** | https://github.com/nkarasiak/qgis-mcp | Fork/variante avec capacités étendues (100+ outils MCP vs ~15 pour l'original). | Rythme de publication soutenu malgré moins d'étoiles que l'original (chiffres à revérifier depuis le relevé du 17/07/2026). |
 
 ### mcp-filesystem
 
@@ -115,7 +93,7 @@ Hors périmètre pour l'instant : QGIS Server (API WMS/WFS/WPS) pour des traitem
 
 Écarté : `sbroenne/mcp-server-excel` (COM API) — dépend d'Excel installé sous Windows, incompatible avec un serveur mutualisé/Linux.
 
-### Sources (frameworks d'orchestration)
+## Sources (frameworks d'orchestration)
 
 - https://github.com/block/goose
 - https://goose-docs.ai/
@@ -150,7 +128,7 @@ Hors périmètre pour l'instant : QGIS Server (API WMS/WFS/WPS) pour des traitem
 - https://docs.openhands.dev/overview/introduction
 - https://openhands.dev/
 
-### Sources (serveurs MCP)
+## Sources (serveurs MCP)
 
 - https://github.com/jjsantos01/qgis_mcp
 - https://plugins.qgis.org/plugins/qgis_mcp_plugin/
