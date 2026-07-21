@@ -6,6 +6,15 @@
 
 set -euo pipefail
 
+# Charge automatiquement le .env à la racine du repo s'il existe (non versionné, voir .gitignore).
+# Sinon, les variables doivent déjà être exportées dans l'environnement appelant.
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+if [ -f "$REPO_ROOT/.env" ]; then
+  set -a
+  source "$REPO_ROOT/.env"
+  set +a
+fi
+
 : "${DATABASE_URI:?Variable DATABASE_URI non définie (voir config/.env.example)}"
 : "${MCPO_API_KEY_POSTGRES:?Variable MCPO_API_KEY_POSTGRES non définie (voir config/.env.example)}"
 

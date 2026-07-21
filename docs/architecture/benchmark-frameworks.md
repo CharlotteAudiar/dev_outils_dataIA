@@ -94,6 +94,25 @@ Indicateurs de pérennité relevés le 17/07/2026 (étoiles, forks, dernière re
 
 Écarté : `sbroenne/mcp-server-excel` (COM API) — dépend d'Excel installé sous Windows, incompatible avec un serveur mutualisé/Linux.
 
+## Moteurs de recherche web candidats
+
+Recherche comparative pour la fonctionnalité de recherche web native d'Open WebUI (*Settings > Web Search*), relevée le 21/07/2026. Cadrage : déploiement pour ~15 personnes, volume estimé à moins de 5 requêtes/jour/personne (≈1 650 requêtes/mois). Trois candidats évalués, tous nativement supportés comme provider Open WebUI.
+
+**Candidat identifié mais non évalué en profondeur** : **Linkup**, cité dans une comparaison tierce comme le provider "le plus précis" du marché — à creuser si Brave/SearXNG/Tavily s'avéraient insuffisants à l'usage.
+
+| Critère | Brave Search API | SearXNG | Tavily |
+|---|---|---|---|
+| **Nature** | Index propre (30+ milliards de pages), API commerciale hébergée par Brave. | Métamoteur auto-hébergé (Docker) : agrège DuckDuckGo, Qwant, Bing, Google, etc. — pas d'index propre. | API de recherche conçue dès l'origine pour l'usage agentique/LLM (endpoints "search" et "extract"), hébergée par Tavily. |
+| **Modèle économique / coût** | Tier gratuit **supprimé en février 2026** : désormais 5$ de crédit mensuel offert (~1 000 requêtes), puis facturation à la carte ~4-5$/1 000 requêtes. Carte bancaire requise dès l'inscription. | Gratuit à l'usage (aucune clé API, aucune carte bancaire) — seul coût : l'hébergement du service, déjà prévu puisqu'Open WebUI tourne déjà en interne. | 1 000 crédits gratuits par mois, à vie, sans carte bancaire. Au-delà : 30$/mois (4 000 crédits) ou 0,008$/crédit en pay-as-you-go. |
+| **Estimation coût mensuel pour ~15 utilisateurs (≈1 650 requêtes/mois)** | ≈3-5 € (1 000 requêtes couvertes par le crédit, ~650 facturées en sus). | Gratuit (hors maintenance réseau, voir Fiabilité). | ≈5 € en pay-as-you-go (1 000 gratuites + 650 × 0,008$) ou 30$/mois si palier fixe choisi — moins granulaire que Brave. |
+| **Qualité / cohérence des résultats** | Constante — index propre, pas dépendant de la tolérance d'un tiers au scraping. | Variable — dépend entièrement de ce que les moteurs sources laissent passer ce jour-là. | Bonne — reformate et enrichit les résultats spécifiquement pour un usage LLM (au-delà du simple classement web). |
+| **Adapté LLM/RAG** | API dédiée ("LLM Context API") renvoyant des "smart chunks" pré-découpés en markdown ; outil de recherche déjà utilisé par Claude côté serveur. | JSON brut classique — nettoyage/reformatage à la charge du développeur avant injection dans le LLM. | Conçu nativement pour RAG : endpoints "search" + "extract" renvoyant du contenu déjà structuré pour un LLM. |
+| **Fiabilité opérationnelle** | Bonne — infrastructure propre, pas de dépendance au scraping tiers. | Point faible documenté en 2026 : les moteurs sources (DuckDuckGo, Qwant) détectent le trafic agrégé comme du bot et renvoient CAPTCHA/erreurs ; une instance peut se dégrader progressivement sans hygiène réseau soignée (rate limiting, proxy sortant, réputation IP du serveur). | Service commercial dédié — aucun problème de CAPTCHA équivalent documenté dans les sources consultées. |
+| **Souveraineté / hébergement** | Hébergé chez Brave (US), pas self-hosted. | 100% auto-hébergé — cohérent avec l'infra déjà interne (Postgres, QGIS, Open WebUI), même si les requêtes sont in fine relayées aux moteurs sources. | Hébergé chez Tavily (US), pas self-hosted. |
+| **Compatibilité Open WebUI** | Provider natif (`brave`). | Provider natif (`searxng`). | Provider natif (`tavily`). |
+| **Avantages** | Qualité constante, faible latence, pensé pour l'usage LLM, coût prévisible et modéré au volume Audiar. | Gratuit, aucune clé API/carte bancaire, cohérent avec la logique self-hosted déjà en place pour le reste du projet. | Gratuit jusqu'à 1 000 requêtes/mois sans carte bancaire, sortie déjà formatée pour un LLM. |
+| **Inconvénients** | N'est plus gratuit depuis février 2026 ; dépendance à un tiers commercial ; carte bancaire requise. | Fiabilité variable dans la durée (CAPTCHA), demande une maintenance réseau (rate limiting, proxy sortant) pour rester utilisable au quotidien. | Crédits gratuits dépassés dès ~1 000 requêtes/mois pour 15 utilisateurs ; palier payant (30$/mois) moins granulaire que le pay-as-you-go de Brave. |
+
 ## Sources (frameworks d'orchestration)
 
 - https://github.com/block/goose
@@ -146,3 +165,17 @@ Indicateurs de pérennité relevés le 17/07/2026 (étoiles, forks, dernière re
 - https://github.com/haris-musa/excel-mcp-server
 - https://github.com/negokaz/excel-mcp-server
 - https://github.com/sbroenne/mcp-server-excel
+
+## Sources (moteurs de recherche web)
+
+- https://docs.openwebui.com/features/chat-conversations/web-search/providers/brave/
+- https://docs.openwebui.com/features/chat-conversations/web-search/providers/searxng/
+- https://docs.openwebui.com/features/chat-conversations/web-search/providers/tavily/
+- https://brave.com/learn/best-search-api-2026/
+- https://www.implicator.ai/brave-drops-free-search-api-tier-puts-all-developers-on-metered-billing/
+- https://costbench.com/software/ai-search-apis/brave-search-api/
+- https://www.serverspan.com/en/blog/searxng-on-a-vps-how-to-run-private-search-without-getting-rate-limited-into-uselessness
+- https://github.com/Fosowl/agenticSeek/issues/410
+- https://docs.tavily.com/documentation/api-credits
+- https://coldiq.com/blog/tavily-pricing
+- https://www.linkup.so/blog/best-web-search-for-open-webui-setup-guide-and-provider-comparison

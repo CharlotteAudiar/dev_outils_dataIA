@@ -142,17 +142,15 @@ Fermer cette fenêtre, puis dans le panneau QGIS MCP principal, cliquer sur **"S
 
 `qgis-mcp-server` est exposé via **`mcpo`** (proxy MCP → OpenAPI, [open-webui/mcpo](https://github.com/open-webui/mcpo)) plutôt qu'en connexion MCP native directe — raison détaillée dans `docs/architecture/decision-framework.md` (section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`"). `mcpo` lance lui-même `qgis-mcp-server` en sous-processus (transport `stdio`) et expose une API OpenAPI classique.
 
-Dans Git Bash :
+Créer un fichier `.env` à la racine du repo (non versionné, voir `.gitignore`) à partir de `config/.env.example`, en renseignant au moins `MCPO_API_KEY_QGIS` (la clé à réutiliser côté Open WebUI, authentification Bearer). Puis, dans Git Bash, lancer le script packagé plutôt que la commande brute :
 
 ```
-uvx mcpo --port 8001 --api-key "choisis-une-cle-ici" -- uvx --from git+https://github.com/nkarasiak/qgis-mcp qgis-mcp-server
+./servers/mcp-qgis/start.sh
 ```
 
-- `--port 8001` : port d'écoute de `mcpo` (choisi arbitrairement).
-- `--api-key "..."` : clé à réutiliser côté Open WebUI (authentification Bearer).
-- Tout ce qui suit `--` est la commande du serveur MCP que `mcpo` doit lancer lui-même.
+`start.sh` charge automatiquement ce `.env` (variables exportées via `set -a`/`source`/`set +a`) avant de lancer `uvx mcpo --port 8001 --api-key "$MCPO_API_KEY_QGIS" -- uvx --from git+https://github.com/nkarasiak/qgis-mcp qgis-mcp-server` — port `8001` choisi arbitrairement, tout ce qui suit `--` étant la commande du serveur MCP que `mcpo` doit lancer lui-même.
 
-Laisser ce terminal ouvert tant que la connexion QGIS doit rester disponible dans Open WebUI.
+Laisser ce terminal ouvert tant que la connexion QGIS doit rester disponible dans Open WebUI (cf. point de vigilance sur la supervision des processus à l'échelle, `docs/architecture/decision-framework.md`).
 
 ### Étape 4 — Reconfigurer la connexion dans Open WebUI
 

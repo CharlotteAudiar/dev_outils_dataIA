@@ -19,10 +19,11 @@ Plugin retenu : **QGIS MCP** (Nicolas Karasiak, [nkarasiak/qgis-mcp](https://git
 2. **Serveur MCP** (`qgis-mcp-server`) — traduit MCP vers le socket TCP du plugin. Lancé via `uv`/`uvx` (voir `docs/guides.md` pour l'installation d'`uv`), transport `stdio` par défaut.
 3. **`mcpo`** ([open-webui/mcpo](https://github.com/open-webui/mcpo)) — proxy qui encapsule `qgis-mcp-server` (transport `stdio`) et l'expose en API **OpenAPI** classique. C'est la pièce qui permet la connexion à Open WebUI, **dans tous les cas de déploiement** (poste local comme instance mutualisée) — voir "Pourquoi `mcpo` et pas le MCP natif" ci-dessous.
 
-**Commande de lancement (poste de l'agent)** — packagée dans `start.sh` (même dossier, variable `MCPO_API_KEY_QGIS` à définir, voir `config/.env.example`) :
+**Commande de lancement (poste de l'agent)** — packagée dans `start.sh` (même dossier) :
 ```
 uvx mcpo --port 8001 --api-key "<une-clé-au-choix>" -- uvx --from git+https://github.com/nkarasiak/qgis-mcp qgis-mcp-server
 ```
+`start.sh` charge automatiquement le `.env` à la racine du repo s'il existe (`MCPO_API_KEY_QGIS` — voir `config/.env.example` pour le modèle) ; sinon la variable doit déjà être exportée dans l'environnement appelant.
 
 **Connexion côté Open WebUI** : Admin Settings → External Tools (admin) ou, pour un utilisateur non-admin sur une instance mutualisée (cf. plus bas), **Settings personnels → onglet "Integrations" (FR : "Intégrations") → "Manage Tool Servers" (FR : "Gérer les serveurs d'outils")** — pas l'onglet "Connections"/"Connexions", qui lui sert aux endpoints de modèles (OpenAI-compatible), pas aux serveurs d'outils. → **Type : OpenAPI**, **URL : `http://host.docker.internal:8001`** (Open WebUI tourne dans Docker ; `host.docker.internal` désigne le poste hôte) ou `http://localhost:8001` si Open WebUI tourne hors Docker, **Auth : Bearer**, avec la même clé que `--api-key`.
 

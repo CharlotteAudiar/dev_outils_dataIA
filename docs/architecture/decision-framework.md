@@ -2,6 +2,18 @@
 
 Décisions techniques (ADR) retenues pour le projet. Le détail de la recherche comparative qui a nourri ces décisions se trouve dans `benchmark-frameworks.md` (même dossier) ; ce fichier-ci ne contient que les décisions elles-mêmes et leur justification.
 
+## Vue d'ensemble
+
+| Composant | Outil retenu | Statut (21/07/2026) | Détail |
+|---|---|---|---|
+| Framework d'orchestration | **Open WebUI** ("Open WebUI Audiar") | Instance à créer, à commencer en local sur le poste de Charlotte | Section "Framework d'orchestration" ci-dessous |
+| Connexion des serveurs MCP | **mcpo** (proxy MCP → OpenAPI) | Choix arrêté | Section "Connexion des serveurs MCP à Open WebUI" ci-dessous |
+| mcp-qgis | [nkarasiak/qgis-mcp](https://github.com/nkarasiak/qgis-mcp) | **Monté et validé**, y compris compte non-admin | `servers/mcp-qgis/README.md` |
+| mcp-postgres | [crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp) | Prochain serveur à monter | `servers/mcp-postgres/README.md` |
+| mcp-filesystem | [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem) | Reporté — pas de cas d'usage l'appelant dans le scope Open WebUI actuel | Section "Serveurs MCP retenus" ci-dessous |
+| mcp-excel | [haris-musa/excel-mcp-server](https://github.com/haris-musa/excel-mcp-server) | Pas encore monté (dossier `servers/mcp-excel/` à créer) | Section "Serveurs MCP retenus" ci-dessous |
+| Recherche web (fonction native Open WebUI) | **Pas encore tranché** — Brave, SearXNG et Tavily benchmarkés | Décision à prendre | `benchmark-frameworks.md`, section "Moteurs de recherche web candidats" |
+
 ## Framework d'orchestration : Open WebUI Audiar (instance à créer)
 
 **Décision (20/07/2026)** : pour l'usage courant (catalogue, appels d'outils MCP dont QGIS en mode hybride — cf. `servers/mcp-qgis/README.md`), le framework retenu est **Open WebUI** ("Open WebUI Audiar" une fois l'instance créée et personnalisée). Aucune instance Open WebUI n'existe encore chez Audiar à ce stade — elle est à créer, en commençant par une installation locale sur le poste de Charlotte (prototype, voir `docs/guides.md`), avant d'envisager un hébergement partagé pour plusieurs chargés d'études. Comparé aux dix autres candidats évalués (voir `benchmark-frameworks.md`), justification par critère :
@@ -37,3 +49,23 @@ Chaque serveur MCP métier (`mcp-qgis`, `mcp-postgres`, futurs `mcp-filesystem`/
 2. **Protection anti-DNS-rebinding, même en local** : les serveurs MCP construits avec FastMCP (dont `qgis-mcp-server`) activent par défaut une vérification de l'en-tête HTTP `Host` de la requête entrante contre une liste blanche limitée à `localhost`/`127.0.0.1`. Comme Open WebUI tourne dans Docker, il doit appeler `http://host.docker.internal:<port>` pour atteindre le poste hôte — un `Host` qui n'est jamais dans cette liste blanche. Résultat observé (sur `qgis-mcp-server`) : `421 Misdirected Request`. Aucune variable d'environnement documentée par ce projet ne permet d'élargir cette liste blanche. Ce blocage touche donc aussi le cas d'un Open WebUI local (pas seulement l'instance mutualisée), et concerne potentiellement tout futur serveur MCP également construit avec FastMCP.
 
 `mcpo` évite ce deuxième problème par construction : il lance le serveur MCP lui-même en sous-processus (transport `stdio`, pas de couche HTTP entre les deux), et expose sa propre API OpenAPI (FastAPI, sans cette vérification de `Host`).
+
+## Lancement des serveurs MCP : pourquoi `uv`/`uvx` plutôt qu'un `pip install` classique
+
+**Décision** : chaque serveur MCP métier (`qgis-mcp-server`, `postgres-mcp`) est lancé via `uvx` — jamais installé « en dur » dans un environnement Python dédié via `pip install`. Commandes exactes : `servers/mcp-qgis/README.md` et `servers/mcp-postgres/README.md` ; pas-à-pas d'installation d'`uv` sur le poste : `docs/guides.md`.
+
+Justification (vérifiée le 20/07/2026 lors du montage de `mcp-qgis`, équivalent de `npx` côté écosystème JavaScript) :
+
+- Pas de `venv` à créer/activer manuellement par un profil non-développeur à chaque session.
+- Toujours la version exacte du dépôt GitHub visé (`--from git+https://...`), sans étape d'installation séparée à maintenir dans le temps.
+- Cache stocké globalement (`%LOCALAPPDATA%\uv\cache` sous Windows) — rien ne pollue le dossier du projet.
+- Téléchargement une seule fois (mise en cache), démarrages suivants rapides ; `--refresh-package` disponible pour forcer une revérification de la dernière version si besoin (non utilisé au quotidien).
+
+## Point de vigilance : passage à l'échelle (15 utilisateurs) — supervision des processus `uv`/`mcpo`
+
+**Pas encore tranché (identifié le 21/07/2026)**. Aujourd'hui, chaque serveur `mcpo`/`uvx` est lancé manuellement dans un terminal laissé ouvert sur le poste de Charlotte — acceptable pour un prototype à une personne, mais ça ne tiendra pas pour un déploiement à 15 chargés d'études non-développeurs. La réponse diffère selon deux familles de serveurs :
+
+- **Serveurs liés à un poste individuel** (`mcp-qgis` aujourd'hui ; potentiellement de futurs `mcp-excel`/`mcp-filesystem` s'ils touchent des fichiers ou applications locales) : doivent tourner sur la machine de chaque agent, pas ailleurs. Le geste manuel actuel (ouvrir un terminal, coller la commande, le laisser ouvert) devra être remplacé par un lancement silencieux et automatique — piste à évaluer : tâche planifiée au démarrage/à l'ouverture de session Windows, ou véritable service Windows (ex. NSSM/WinSW encapsulant la commande `uvx`), avec redémarrage automatique en cas de plantage.
+- **Serveurs centralisés** (`mcp-postgres`, qui n'a aucune raison de dépendre du poste d'un utilisateur en particulier puisqu'il interroge une base distante) : à déployer une seule fois, sur le même serveur que l'instance Open WebUI mutualisée à venir, géré comme un vrai service (conteneur Docker avec `--restart always`, ou service systemd/Windows) plutôt qu'en commande manuelle dans un terminal lié à un poste précis.
+
+Cette question est une sous-partie de la décision d'hébergement partagé déjà anticipée plus haut ("commencer en local... avant d'envisager un hébergement partagé") — à trancher au moment de packager le déploiement pour plusieurs chargés d'études, pas avant. Aucun outil de supervision précis n'a été benchmarké à ce stade.

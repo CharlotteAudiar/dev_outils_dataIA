@@ -13,11 +13,11 @@ Fonctionnalités au-delà de la simple exécution SQL : santé de la base (index
 
 Comme pour QGIS, le serveur est exposé à Open WebUI via `mcpo` (proxy MCP stdio → OpenAPI) — voir `docs/architecture/decision-framework.md`, section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`", pour la justification détaillée de ce choix (pas de MCP natif direct dans Open WebUI en pratique).
 
-**Commande de lancement** — packagée dans `start.sh` (même dossier, variables `DATABASE_URI`/`MCPO_API_KEY_POSTGRES` à définir, voir `config/.env.example`) :
+**Commande de lancement** — packagée dans `start.sh` (même dossier) :
 ```
 uvx mcpo --port 8002 --api-key "<une-clé-au-choix>" -- uvx postgres-mcp --access-mode=restricted
 ```
-- `DATABASE_URI` doit être définie dans l'environnement avant de lancer la commande (`export DATABASE_URI="postgresql://user:password@host:5432/dbname"` sous Git Bash, ou variable d'environnement Windows) — ne jamais committer cette valeur, voir `.gitignore`/`config/.env.example`.
+- `start.sh` charge automatiquement le `.env` à la racine du repo s'il existe (`DATABASE_URI`, `MCPO_API_KEY_POSTGRES` — voir `config/.env.example` pour le modèle) ; sinon ces variables doivent déjà être exportées dans l'environnement appelant. Ne jamais committer le `.env` réel — voir `.gitignore`.
 - Port `8002` choisi arbitrairement pour ne pas entrer en conflit avec `mcpo` de `mcp-qgis` (port `8001`) si les deux tournent en même temps.
 
 **Connexion côté Open WebUI** : *Intégrations → Gérer les serveurs d'outils* (pas "Connexions", cf. `servers/mcp-qgis/README.md`) → Type OpenAPI, URL `http://localhost:8002` (ou `http://host.docker.internal:8002` si Open WebUI tourne en Docker), Auth Bearer + la même clé que `--api-key`.
