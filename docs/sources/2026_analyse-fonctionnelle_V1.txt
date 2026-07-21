@@ -1,0 +1,917 @@
+﻿Analyse fonctionnelle v1
+Données et outils IA
+
+
+Référence : 2026-HP-INT-001
+
+
+
+
+
+INTRODUCTION
+
+Le développement massif des outils liés à l'IA générative et l'utilisation à grande échelle de LLM offrent de nouvelles perspectives dans le domaine de la géomatique. Les métiers de l’Audiar, en particulier ceux s’attachant au traitement des données, se retrouvent confrontés à cette évolution technologique majeure. Cela passe, notamment, par deux dimensions : la valorisation des données (l’interrogation des bases de données, la production de tableaux de bord ou d’indicateurs mais aussi de dataviz ou encore l’aide à l’analyse) et la production cartographique.
+
+Dans ce contexte, le Pôle données et dynamiques foncières mène une réflexion sur les besoins des techniciens et chargés d’études de l'agence et les outils IA les plus pertinents à mobiliser. Ce projet doit aboutir à des propositions d'actions et à l’expérimentation d'outils IA adaptés aux besoins, en particulier à ceux des chargés d’études.
+
+L'analyse fonctionnelle est le deuxième livrable du projet après la note de cadrage. Fondée sur 24 entretiens menés auprès de la majorité des métiers de l'agence et sur un travail de documentation et d'observation, elle décrit les processus d'exploitation des données, dresse un état des lieux des usages de l'IA générative, et recueille les attentes, les difficultés et les risques perçus. Elle permet de dégager neuf cas d'usages, et de recenser les contraintes et enjeux qui pourront guider les choix à venir.
+
+Elle sera suivie d'une analyse technique, qui décrira l’écosystème technique de l’Audiar et les architectures envisageables, puis d’une phase de conception et d’expérimentations.
+
+
+SOMMAIRE
+
+
+1. Objectifs et méthodologie de l’analyse fonctionnelle	2
+1.1. Rappel des objectifs du projet	2
+1.2. Méthodologie	2
+
+2. Une grande expertise des données à l’Audiar	3
+2.1. Missions et organisation	3
+2.2. Thématiques, études, données	4
+
+3. Processus et facteurs de variations de l’exploitation des données	5
+3.1. Quatre phases principales	5
+3.2. Facteurs de variation	6
+3.3. Des interactions plus ou moins fortes avec le pôle Données	7
+3.4. À retenir	8
+
+4. Un usage généralisé de l’IA	8
+4.1. Outils	8
+4.2. Des pratiques s’ancrent, d’autres s’expérimentent	9
+4.3. À retenir	10
+
+5. IA et données : beaucoup d’attentes, peu d’appréhension	11
+5.1. Arguments en faveur de l’IA	11
+5.2. Limites et risques	11
+5.3. Points de difficultés et attentes/opportunités	12
+5.4. À retenir	13
+
+6. Cas d’usages	14
+6.1. Besoins identifiés	14
+6.2. Synthèse des principaux cas d’usages	15
+6.3. Fiches cas d’usage	15
+6.4. Critères de réussite	21
+
+7. Contraintes, enjeux et risques	21
+7.1.  Contraintes d’usage	21
+7.2.  Contraintes organisationnelles	22
+7.3. Enjeux humains et collectifs	23
+7.4. Enjeux technologiques et externes	23
+7.5. À retenir	24
+
+Conclusion	24
+
+
+
+1. OBJECTIFS ET METHODOLOGIE 
+
+1.1. Rappel des objectifs du projet
+
+Le projet porte sur les opportunités de l’IA générative pour l’exploitation des données, l’analyse spatiale et la cartographie. Il compte plusieurs objectifs : 
+- Diagnostic : analyses fonctionnelle et technique
+- Benchmark et retour d’expériences (agences d’urbanisme notamment)
+- Propositions d’actions à mettre en place sur différentes échéances
+- Tests sur des cas d’usages
+- Accompagnement au déploiement de l’environnement
+
+Le projet est complémentaire aux expérimentations menées avec les outils Copilot (abonnement d’entreprise à Microsoft 365, avec Copilot de base) et Claude (six licences tournantes), et doit notamment permettre de : 
+- rechercher des solutions IA souveraines, notamment explorer les possibilités offertes par RAGaRenn, un enjeu vis-à-vis des données sensibles en particulier ;
+- limiter l’empreinte environnementale de l’usage de l’IA de l’agence ;
+- poursuivre la démarche de R&D et développer des compétences dans le domaine de l’IA.
+
+L’analyse fonctionnelle vise à : 
+- décrire les processus à l’œuvre dans la manipulation et la valorisation des données ;
+- décrire les usages et expérimentations d’IA générative ;
+- relever les principaux points de difficultés dans les processus ;
+- recueillir les attentes et/ou opportunités en termes d’IA ;
+- lister les enjeux et risques associés à l’utilisation d’IA générative pour l’Audiar ;
+- définir les cas d’usages les plus adaptés au développement d’outils IA ;
+- intégrer le mode d’organisation dans la réflexion, en particulier l’articulation du travail du pôle données avec celui des chargés d’études.
+
+1.2. Méthodologie
+
+La phase de diagnostic et de recueil des besoins a consisté à mener des entretiens physiques avec le directeur, les quatre responsables des pôles thématiques, quinze chargés d’études (dont deux délégués du personnel), quatre collaborateurs des missions d’Appui (informatique, infographie, assistantes), le cartographe, attaché au pôle Urbanisme-Planification, et l’ensemble des membres du pôle Données (Julien Déniel, son responsable et superviseur du présent projet, et quatre collaborateurs), ainsi qu’une chargée d’études du Conseil de développement.
+
+Afin de compléter l’analyse des besoins, deux structures du réseau breton Datagences ont été contactées, l’ADDRN (Saint-Nazaire) et l’Adeupa (Brest), et un entretien a été organisé avec Hugo Le Roux, qui administre notamment la base de données de Datagences et gère les services associés.
+
+Une grille d’entretien et une grille d’analyse ont été élaborées pour analyser en particulier les besoins des chargés d’études (voir annexes). Les résultats détaillés ne sont pas rendus publics.
+
+Cette démarche s’accompagne d’un travail d’observation : revue des productions de l’année passée, évaluation du niveau de complexité des traitements de données mis en œuvre, consultation de la documentation interne (organigramme, fiches de postes, etc.), prise en main des différents outils internes et espaces collaboratifs... 
+ 2. UNE GRANDE EXPERTISE DES DONNÉES
+
+2.1. Missions et organisation
+
+L’Audiar, agence d’urbanisme créée en 1972, a aujourd’hui quatre missions principales : l’observation des dynamiques territoriales, l’aide à la décision, la prospective et la mise en partage.
+
+Elle est organisée en cinq pôles thématiques : Urbanisme-Planification, Démographie-Habitat, Environnement-Transitions et Economie-Coopérations et Données et dynamiques foncières. Actuellement, les quatre premiers pôles comptent 15 chargés d’études (formellement, 13 chargés et 2 assistants), en plus de leur responsable, et d’un cartographe en ce qui concerne le pôle Urbanisme-Planification.
+
+Le pôle Données et dynamiques foncières, officiellement créé il y a deux ans, a un rôle transversal. La Coordination numérique du 25 mars 2024 a officialisé ses objectifs : répondre aux besoins des projets de l’agence ; offrir un environnement numérique confortable et performant ; garantir l’accès, la qualité et la mise à jour des données ; réaliser une veille sur les évolutions techniques ; former une équipe (notamment en pilotant la dimension numérique des projets). Le pôle Données porte aussi plusieurs projets thématiques sur le foncier (observatoire foncier, MOS...) 
+
+Enfin, certaines fonctions sont regroupées dans les missions d’appui, qui regroupent deux assistantes, une infographiste, une chargée de communication et un responsable informatique.
+
+Le Conseil de développement est hors périmètre du projet car il s’agit d’une autre structure, hébergée par l’Audiar (l’agence salarie ses deux collaboratrices), qui a ses propres besoins et missions. 
+
+
+
+
+
+
+
+ORGANIGRAMME DE L’AUDIAR AU 4 MAI 2026. CRÉDIT : AUDIAR.
+
+2.2. Thématiques, études, données
+
+L’Audiar traite de sujets divers : planification urbaine et prospective urbaine, paysages, espaces publics, démographie, logement, habitat, logement social, environnement, biodiversité, mobilités, activités économiques, foncier, finances publiques, modes de vie... 
+
+L’agence produit un grand nombre d’études, de notes, de présentations, ainsi que des applications web et d’autres outils. Au total, elle a produit près de 200 documents en 2025.
+
+La plupart mobilisent des données : celles-ci peuvent être utilisées pour contextualiser une analyse avec des chiffres, ou pour établir un diagnostic à partir d’analyses poussées impliquant de nombreux traitements et une grande maîtrise méthodologique. Ces deux approches encadrent une large variété de démarches.
+
+L’expertise de l’exploitation des données est partagée entre les pôles thématiques et le pôle Données. Du côté des pôles thématiques, les compétences techniques varient selon les chargés d’études, mais tous maîtrisent la logique et les limites des traitements mis en œuvre dans les études dont ils ont la responsabilité, avec pour certains un appui du pôle Données. Ce dernier regroupe des experts de l’exploitation des données, avec des spécialités différentes, notamment en termes d’outils.
+
+Au-delà de son expertise thématique, l’Audiar produit des analyses de données mobilisant des méthodologies avancées. Dans certains domaines – notamment le foncier, l’habitat, le logement social, les mobilités, la sociodémographie, l’environnement et l’économie –, elle en a même fait une spécialité. Elle est ainsi considérée comme un partenaire incontournable de ses membres pour l’exploitation de certaines données.
+
+Par ailleurs, l’agence valorise son travail des données au moyen de graphiques et de cartographies. Une partie sont produits par les chargés d’études, d’autres par le pôle Données, ou par le cartographe au sein du pôle Urbanisme-Planification. Le pôle Données produit par ailleurs des applications web visant à exposer des chiffres-clés, des tendances et à comparer les territoires, dans divers domaines.
+
+Les productions de l’agence s’inscrivent dans un programme de travail établi avec ses membres. Elles sont organisées en projets, chacun confié à un chef de projet, le plus souvent un chargé d'études. Il en assure la conduite et peut éventuellement mobiliser d’autres collaborateurs selon les besoins : autres chargés d’études, pôle Données, cartographe, missions d’appui.
+
+
+3.  PROCESSUS ET FACTEURS DE VARIATIONS 
+DE L’EXPLOITATION DES DONNÉES
+
+3.1. Quatre phases principales
+
+Les processus métiers de l’Audiar, dans l’exploitation des données, peuvent être représentés en quatre phases principales : collecte, préparation et enrichissement, exploration et analyse, et enfin valorisation pour la production des livrables. Ces phases se chevauchent, et des allers-retours peuvent avoir lieu entre la phase de préparation et celle d’analyse, pour corriger, adapter, améliorer un traitement.
+
+Les entretiens ont permis de révéler des approches différentes selon les chargés d’études, les thématiques, les projets et leur organisation, avec plusieurs cas de figure :
+  - travail en complète autonomie des chargés d’études, de la collecte des données à la mise en page ;
+  - travail avec le pôle Données, qui peut être mobilisé pour collecter des données, les traiter et/ou les valoriser (cartographie, outils web, mises en pages Excel...), ainsi que pour créer des outils internes d’exploration et d’analyse ;
+  - dans le pôle Urbanisme-planification, travail avec Gilles Belleil, cartographe, qui est amené à collecter des données géographiques, créer les projets QGIS, opérer des traitements et produire des cartographies.
+
+
+SCHÉMA DES PHASES DE L’EXPLOITATION DES DONNÉES ET PRISE EN CHARGE PAR LES MÉTIERS. CRÉDIT : AUDIAR.
+Un certain nombre de documents, les études plus conséquentes notamment, ou demandant une maquette particulière, sont confiés à Isabelle Jourdren, infographiste, ou Nathalie Le Roux, assistante, pour leur mise en page dans Adobe InDesign. Leurs missions restent éloignées du travail sur les données : elles récupèrent les cartographies, graphiques et tableaux produits par ou pour les chargés d’études et appliquent si besoin la charte graphique, sans évaluer ou modifier le contenu.
+
+Les assistantes, Nathalie Le Roux et Sabrina Quélavoine, ont par ailleurs un rôle de relecture des études. Elles vérifient entre autres la cohérence des chiffres dans le texte, les cartographies, graphiques et tableaux, mais, si des erreurs sont décelées ou suspectées, le document est renvoyé au chargé d’études. Nathalie Le Roux a aussi un rôle de saisie de chiffres depuis des documents PDF.
+
+Une relecture est aussi effectuée par le responsable de pôle et le directeur. 
+
+
+3.2. Facteurs de variation  
+
+Les données suivent donc un circuit distinct selon les projets. Et les processus varient aussi au sein de chaque phase d’exploitation des données. Les méthodes mises en œuvre par les chargés d’études, l’effort que demande ce travail, le niveau technique qu’il requiert, l’intérêt même du travail sur les données pour l’étude, diffèrent d’un projet à l’autre.
+
+Pour certains chargés d’études, l’exploitation des données est le cœur de l’analyse, pour d’autres elle ne fournit que le contexte. Certains la mobilisent dans la plupart de leurs projets, d’autres ponctuellement. 
+
+Il y a ainsi autant de manières de travailler que de chargés d’études à l’Audiar. Les processus – entre les phases d’exploitation et au sein de chacune d’entre elles – varient selon plusieurs facteurs, qui peuvent être classés en trois catégories : objectifs du projet, contexte, et profil du chargé d’études.
+
+Objectifs du projet :
+- type de commanditaire / destinataire (élus, chefs de projets, services...)
+- type d’étude (études ponctuelles ou récurrentes, suivi...)
+- périmètre étude (du bâtiment à la région, voire au-delà)
+- contenu attendu
+
+Contexte :
+- caractéristiques des données en entrée (nature, taille, qualité, source...) et traitements nécessaires
+- outils nécessaires à l’exploitation des données
+- fréquence d’utilisation de données
+- collaborations existantes (processus associant historiquement le pôle Données)
+- volume de travail et priorités
+
+
+
+Profil du chargé d’études :
+- spécialités, orientations méthodologiques
+- appétences
+- technicité
+- expérience
+- connaissance de l’écosystème interne
+- processus de raisonnements
+- niveau d’autonomie souhaité
+- propension à déléguer, à collaborer
+
+La technicité des chargés d’études, facteur important dans l’exploitation des données, peut être schématisée en trois catégories : les profils généralistes (3-4 chargés d’études), qui consultent les données et cartographies plus qu’ils ne les produisent ; les profils intermédiaires (8-9), qui maîtrisent les traitements Excel courants et la cartographie thématique ; et les profils avancés (5), qui mobilisent des langages de programmation (souvent avec l’aide de l’IA) et des méthodologies avancées. Ces profils ne sont pas figés : ils évoluent avec l’expérience, la formation et les projets.
+
+Si les processus varient, un certain nombre d’aspects sont communs à tous les chargés d’études dans le travail des données : 
+- la mission d’exploration et d’analyse ;
+- l’utilisation du logiciel Excel (QGIS au moins en consultation pour la grande majorité) ;
+- l’utilisation des données partagées de l’agence et de Datagences (bases de données).
+
+3.3. Des interactions plus ou moins fortes avec le pôle Données
+
+La nature et l’intensité des relations des chargés d’études au pôle Données et dynamiques foncières dépendent en partie des facteurs précédemment listés. Aujourd’hui, il n’est pas mobilisé sur toutes les productions impliquant des données, mais tous les chargés d’études travaillent au moins ponctuellement avec lui, par exemple pour intégrer des données dans la base Audiar.
+
+Plusieurs facteurs sont liés au contexte, à l’organisation. Certains usages sont ancrés depuis plusieurs années, en particulier le travail de Dominique Gérard sur certains traitements de données (habitat, logement social, fichiers fonciers). D’un autre côté, même si un besoin existe, un chargé d’étude peut s’abstenir de solliciter le pôle, et choisir de faire lui-même des traitements, s’il estime que le pôle ne pourrait pas répondre à ses demandes dans un délai suffisant pour lui. À cet égard, plusieurs chargés d’études pensent que le volume de travail du pôle Données lui permettrait difficilement de répondre à des demandes hors programme.
+
+D’autres paramètres sont à rattacher aux caractéristiques des données : 
+- difficulté d’accès (diffusion par API, fichiers trop lourds pour Excel...), par exemple les fichiers fonciers ;
+- évaluation de la qualité des données nécessitant des traitements ;
+- complexité des traitements (taille des fichiers, croisements complexes, données annuelles à agréger, analyse spatiale...), par exemple les données habitat et logement social ;
+- quantité de données à mobiliser (différences entre une étude substantielle et une note de suivi).
+
+Enfin, certains facteurs concernent le profil du chargé d’études. Une technicité élevée, une appétence pour les outils de traitement et/ou une volonté d’autonomie forte, amènent les chargés d’études à gérer l’ensemble des étapes de travail sur les données. Au contraire, les chargés d’études ne disposant pas des compétences ou de l’expertise nécessaires à leur étude vont les chercher auprès du pôle Données. Ce dernier est aussi davantage mobilisé par les personnes ayant plus d’intérêt pour le travail en équipe, la transversalité, et par celles ayant un volume de travail élevé.
+
+3.4. À retenir
+
+Les processus d’exploitation des données varient fortement d’un chargé d’études à l’autre, selon trois catégories de facteurs : les objectifs du projet, le contexte et le profil du chargé d’études. Trois profils techniques se dessinent, des généralistes aux avancés.
+
+Les outils mobilisés et les compétences mises en œuvre diffèrent en conséquence. Les interactions avec le pôle Données suivent la même logique : elles dépendent des habitudes de collaboration, des caractéristiques des données et du degré d’autonomie recherché.
+
+Quelques invariants demeurent : la mission d’exploration et d’analyse, l’utilisation d’Excel et le recours au moins ponctuel aux données partagées de l’agence.
+
+Le développement de nouveaux outils devra intégrer cette variabilité des approches. Il s’agira de proposer des solutions adaptées au plus grand nombre, tout en anticipant l’évolution des interactions avec le pôle Données.
+
+
+ 4. UN USAGE GÉNÉRALISÉ DE L’IA
+
+4.1. Outils
+
+Deux principaux outils IA sont utilisés à l’Audiar :
+  - Copilot, dans le cadre des abonnements à Microsoft 365, et dont disposent tous les collaborateurs de l’agence. Il peut être utilisé dans l’application Microsoft 365 Copilot, ou directement dans les applications bureautiques (Excel et Word en particulier). Il s’agit de la version "de base", qui est limitée ;
+  - Claude : l’agence dispose actuellement de 6 licences, qui visent principalement à expérimenter les possibilités de l’application Claude desktop (outil Cowork en particulier). Le nombre de licences étant limité, et les possibilités de Cowork nécessitant du paramétrage et un effort de prise en main, ces expérimentations sont encadrées. Les chargés d’études doivent en faire la demande, à partir d’un besoin, et sont accompagnés par un membre du groupe de travail IA. Plusieurs chargés d’études en ont toutefois un usage avancé, et sont autonomes dans son utilisation.
+
+Trois chargés d’études utilisent ou expérimentent des éditeurs de code connectés à des comptes IA (VS Code, Codex, Claude code). Côté pôle Données, l’éditeur de code Cursor est aussi expérimenté. 
+Certaines personnes utilisent aussi des comptes gratuits (Claude, ChatGPT). Ils se tournent vers ces outils notamment pour les expérimenter et comparer les réponses des modèles.
+
+4.2. Des pratiques s’ancrent, d’autres s’expérimentent 
+
+PRINCIPAUX USAGES
+
+L’usage de l’IA chez les chargés d’études et membres du pôle Données est quasi-généralisé. Les usages les plus répandus sont actuellement : 
+- l’aide à la rédaction (livrables, mails...) ;
+- la création de visuels d’illustration (avec plus ou moins de succès) ;
+- la recherche documentaire/benchmark ;
+- la synthèse de documents ;
+- la transcription d’entretiens (outil interne).
+Côté traitement et valorisation des données, l’usage le plus représentatif est l’assistance technique (QGIS, Excel, requêtes SQL pour certains). Plus de la moitié des chargés d’études ont cette utilisation de l’IA, avec parfois une démarche d’autoformation.
+
+EXPERIMENTATIONS ET USAGES AVANCES
+
+Plusieurs autres usages, parfois très avancés, sont expérimentés, et sont même devenus la norme pour quelques-uns. Dans le domaine du traitement et de l’analyse des données, les principaux exemples côté chargés d’études sont, par outil : 
+
+- Excel + Copilot/Claude
+  - génération de calculs/de formules (dont conditionnelles), jointures (index, recherchev)
+  - organisation de plusieurs tableaux dans un fichier (déplacement)
+  - création de tableaux croisés dynamiques
+  - création de graphiques (éventuellement dynamiques)
+  - création de tableaux de bord (intégration de plusieurs fichiers csv avec mise en forme et commentaires)
+  - analyse de données pour définir des profils types à partir de données socio-démographiques
+  - classifications/catégorisations et générations de descriptions
+
+- Excel + PDF + Claude 
+  - récupération de données dans un document PDF, structurées dans un classeur Excel
+
+- QGIS + Claude desktop
+  - sélection attributaires
+  - manipulations spatiales (jointures spatiales, fusions de polygone)
+  - édition de tables
+
+- Langage de programmation + base de données + Claude desktop (Code)/VSCode (IA équipée d’outils et capable de modifier le contenu de tous les fichiers du projet)
+  - génération de cartes et de graphiques
+  - analyse assistée
+  - création de tableaux de bord internes en html à partir de tables
+  - création d’outil d’exploration d’API
+  - reproduction d’études dans un autre périmètre
+  - enrichissement sémantique (nécessite le recours à un modèle de langage et une base de données vectorielle)
+  - création d’outil de cartographie (cartes stats, cartes de flux)
+  - gestion de projet ou de sous-projet assistée (modifications paramètres dans traitements + résultats + livrables par exemple)
+
+Côté pôle Données et cartographie, les exemples relevés sont :
+
+- Excel + Claude :
+  - mise en forme conditionnelle
+  - géolocalisation d’adresses
+  - création de tables à partir de recherches web (scraping)
+
+- QGIS + chat (Copilot, Claude) :
+  - génération de graphiques html dans des mises en pages QGIS
+  - génération de scripts python pour QGIS (analyse GTFS)
+
+
+- Langage de programmation + Claude (+IDE)
+  - analyse de superposition de sections cadastrales (méthodo et traitements)
+  - générations de graphiques
+  
+Ces usages et expérimentations amènent leurs auteurs à optimiser leurs pratiques, notamment en ce qui concerne :
+- le contenu des requêtes (prompt) ;
+- le choix des modèles (comparaisons résultats, tests) ;
+- les outils à associer (MCP, outil de compression RTK, etc.).
+
+Actuellement, les outils IA continuent d’être testés par les chargés d’études. Cette liste, sans doute déjà incomplète, est donc amenée à évoluer rapidement. D’autant que de nouveaux dispositifs sont très régulièrement déployés, ouvrant de nouvelles perspectives, comme Claude design, qui permet de réaliser des présentations de type PowerPoint.
+
+4.3. À retenir
+
+L’usage de l’IA générative est quasi généralisé à l’Audiar. Les pratiques les plus répandues concernent la rédaction, la recherche documentaire, la synthèse et la transcription. Le traitement des données ne représente qu’une partie des usages actuels.
+
+Dans ce domaine, l’assistance technique constitue l’usage dominant. Des expérimentations avancées se développent toutefois, portées par quelques profils autonomes. Elles reposent le plus souvent sur l’association de l’IA à d’autres outils (Excel, QGIS, bases de données notamment), voire l’exploitation des données via du langage de programmation (python).
+
+Les pratiques évoluent rapidement, au rythme du déploiement de nouveaux dispositifs. Le développement des outils IA devra tenir compte de cette dynamique et de la diversité des niveaux d’appropriation.
+
+
+5. IA ET DONNÉES : BEAUCOUP D’ATTENTES,
+PEU D’APPRÉHENSION
+
+5.1. Arguments en faveur de l’IA
+
+Consacrer plus de temps aux tâches à forte valeur ajoutée
+Le principal intérêt de l’IA générative évoqué par les chargés d’études est le gain de temps, en particulier sur les tâches chronophages ou à faible valeur ajoutée : recherche documentaire/benchmark, synthèse de documents, rédaction, transcription.  Ils veulent en gagner là où ils estiment en manquer – analyse, travail partenarial, veille prospective, veille méthodologique, R&D... –, avec des ambitions différentes selon les chargés d’études.
+
+Dans l’exploitation des données, ces tâches chronophages ou à faible valeur ajoutée sont notamment le nettoyage et la vérification de tables (dont des géométries), la préparation des données (jointures avec les périmètres), la création de tableaux croisés dynamiques et graphiques quand ils sont nombreux...
+
+
+
+Gagner en autonomie
+Un deuxième objectif est partagé par plus de la moitié des chargés d’études : être plus autonome avec les outils, en particulier le logiciel QGIS pour la consultation de données, les manipulations géomatiques et la cartographie. L’outil est sophistiqué mais de nombreux chargés d’études n’en ont qu’un usage limité (cartographie thématique, traitements simples). Le recours à l’IA générative facilite leur usage (assistance technique), en particulier quand celui-ci est occasionnel. Cela peut aussi être une manière de se former.
+
+Ne pas rater le coche
+Enfin, un enjeu a été formulé par plusieurs chargés d’études : ne pas se laisser distancer, en tant que professionnel, face à ceux qui maîtriseraient déjà les rouages de l’IA, et en tant qu’agence, vis-à-vis notamment des bureaux d’études évoluant sur le même terrain que l’Audiar. Cette technologie est majoritairement perçue comme une technologie incontournable, dont il est stratégique de se saisir.
+
+5.2. Limites et risques 
+
+Lors des entretiens, les limites et risques que peut représenter l’usage de l’IA générative ont parfois été abordés. 
+
+Pour quelques chargés d’études, la consommation en ressources et en énergie de cette technologie pose question, et les amène à limiter ou du moins questionner l’utilisation de l’IA. Plus globalement, les entretiens n’ont pas dégagé consensus sur l’impact réel de l’IA sur l’environnement, ni sur la manière de concilier performance et responsabilité environnementale. 
+
+Plusieurs risques ont été évoqués par certains chargés d’études : 
+- perte de contrôle sur les traitements effectués ; 
+- perte de capacité d’analyse si elle est déléguée à l’IA ; 
+- perte de cohésion d’équipe, de capacité à collaborer, en considérant que l’usage de l’IA rend plus autonome ; 
+- baisse de l’épanouissement professionnel, si des tâches aujourd’hui satisfaisantes étaient confiées à l’IA ;  
+- instabilité des outils, la technologie étant encore en plein développement (risque d’obsolescence) ;
+- génération d’inégalités si tous les chargés d’études n’ont pas accès aux mêmes outils.
+Par ailleurs, pour la plupart des chargés d’études, le développement des usages de l’IA implique un accompagnement et de la formation (notamment interne) pour prendre en main les outils. 
+
+5.3. Points de difficultés et attentes/opportunités
+
+Les entretiens ont permis de lister plusieurs difficultés dans le travail des données, et de recueillir les attentes et opportunités perçues en matière d’IA. Ces différents éléments ont d’abord été classés selon la phase d’exploitation des données, en précisant quels étaient les outils ciblés dans le cas évoqué : base de données (BD), tableur (Excel), outil SIG et cartographie (QGIS). 
+
+COLLECTE :  
+Points de difficultés :  
+- BD / catalogue de données difficile à appréhender (jeux de données très nombreux, nomenclature technique ou peu lisible, différents fichiers pour une même source, données sources et données traitées au même niveau...)
+- BD / données de contexte (socio-démo, type portrait de territoires) difficilement accessibles
+
+Opportunités :
+- BD / faciliter collecte de données socles
+- BD / faciliter évaluation qualité données
+- BD / extraction depuis des fichiers sources lourds, ne pouvant être ouverts avec Excel
+- BD / interrogation BD en langage naturel (accéder à l’information rapidement)
+- BD / trouver les données sources intéressantes pour le projet dans le catalogue
+
+TRAITEMENT :  
+Points de difficultés :
+- Excel & BD / production de données/enrichissements chronophage (saisie données non structurées depuis une page ou une application web, un document PDF)
+- QGIS / complexité d’utilisation de QGIS, plus largement des opérations géomatiques
+
+Opportunités :
+- Excel / faciliter traitement de données sous Excel (exemple jointures avec index, recherchev)
+- Excel / faciliter l’évaluation des traitements
+- BD / outils d’accès aux données traitées consolidées en base (base éco par exemple)
+- Excel & BD / enrichissement avec recherche web
+- Excel & BD / enrichissement sémantique (modèle de langage + BD vectorielle)
+- QGIS & Excel & BD / reparamétrage des méthodologies de traitements géomatiques (exemple : évolution législation, objectifs documents d’urbanisme)
+- QGIS & Excel & BD / automatisation traitements récurrents ou applicables sur d’autres périmètres
+
+ANALYSE :
+Points de difficultés :
+- Excel / fichiers très denses sont longs à manipuler
+
+Opportunités :  
+- Excel / faciliter l’exploration des données (organisation du fichier, mise en forme conditionnelle, TCD et graphiques, filtres et tris)
+- QGIS / faciliter l’exploration et l’analyse
+- Tous outils / analyse assistée (usage du type gestion de projet ?)
+
+VALORISATION :  
+Points de difficultés :  
+- QGIS / difficultés d’utilisation du logiciel
+- QGIS / accès aux fonds de cartes de référence difficile (nécessité de savoir s’il s’agit de la dernière mise à jour), certains périmètres non intégrés aux projets QGIS chartés
+
+Opportunités :  
+- Excel / application charte graphique tableaux Excel
+- QGIS / faciliter cartographie
+- Autre / production de graphiques type dataviz
+- Autre / production de cartographies
+
+Il s’agit également de mentionner les usages du type gestion de projet, comme cela est possible avec des outils comme Claude Cowork ou des éditeurs de code (Claude code, VS Code, Cursor), qui consistent à donner à l’IA l’accès à son dossier de travail et à lui fournir un certain nombre d’outils pour lire, modifier et créer des fichiers (accès base de données, QGIS, langage de programmation, outils Microsoft...). 
+
+Plusieurs difficultés et opportunités n’ont pas été intégrées car en dehors du champ de l’étude : rédaction ou aide à la rédaction de documents (méthodologies, notes, ...), correction à partir de notes (retours commanditaire, compte-rendu...), application charte graphique aux documents Word ou PowerPoint, automatisation livrables récurrents... 
+
+Cette liste peut ne pas être exhaustive et s’enrichira certainement avec le développement de l’usage de l’IA et l’arrivée de nouveaux outils.
+
+5.4. À retenir
+
+Les attentes vis-à-vis de l’IA générative sont fortes et plutôt partagées. Elles portent en priorité sur le gain de temps, l’autonomie dans l’usage des outils, et le maintien du niveau d’expertise de l’agence. Les attentes sont associées à une demande de formation et/ou d’accompagnement. Plusieurs risques ont été identifiés : perte de contrôle, cohésion d’équipe, inégalités d’accès...
+
+Les points de difficultés et les opportunités concernent toutes les phases de l’exploitation des données, de la collecte à la valorisation. Elles dépassent parfois le seul recours à l’IA et rejoignent des chantiers organisationnels déjà identifiés. L’exploitation des données n’est par ailleurs pas le seul domaine concerné : plusieurs attentes portent sur des usages hors du périmètre de l’étude (rédaction, benchmark…).
+
+Pour vérifier que les attentes sont satisfaites, l’Audiar aura intérêt à capitaliser sur les expérimentations menées, notamment pour objectiver le gain de temps selon les tâches.
+
+
+6. CAS D’USAGES
+
+6.1. Besoins identifiés
+
+À partir de cette revue, les besoins ont été classés selon le type de manipulation des données, en plus de la gestion de projet.
+
+Certaines difficultés listées plus haut dépassent le simple usage de l’IA, et peuvent être d’ordre organisationnel ou relatifs à l’environnement de travail. À cet égard, plusieurs difficultés étaient déjà identifiées, et sont visées dans la feuille de route du pôle Données : réorganisation de bdsig, catalogage, développement de tableaux de bord, partage de connaissances... 
+
+Ces besoins ont été maintenus dans la liste ci-dessous, en considérant que l’IA pouvait apporter d’autres éléments de réponse, ou faciliter la mise en œuvre des chantiers du pôle.
+
+MANIPULATIONS TABULAIRES : 
+
+- obtenir des informations sur les données sources ou consolidées de bdsig/K (dates de mises à jour/dernière donnée disponible ? contenu, attributs, qualité)
+- collecter des données depuis la base de données (voire API)
+- accéder rapidement à l’information (recherche d’une valeur, agrégée ou non, à partir de filtres)
+- collecter des données sources ou consolidées
+- accéder rapidement à des tables issues d’extraction
+- croiser des données, combiner des fichiers temporels (jointures...) 
+- disposer d’outils d’analyse (table, TCD, graphique, cartographie), explorer les données
+- éditer des tables dans Excel, QGIS
+- structurer des données disséminées dans un PDF dans une table 
+- produire/enrichir les données (recherche web, catégorisations sémantiques…)
+- générer des classifications
+
+MANIPULATIONS GEOMATIQUES ET CARTOGRAPHIE :
+
+- manipuler des données géographiques (jointures attributaires, jointures spatiales avec ou sans résumé statistique)
+- effectuer des opérations géomatiques (tampons, extractions par localisation, fusion de polygones, compter les points dans les polygones)
+- créer des cartes thématiques, travailler la discrétisation (cartes choroplèthes, cartes symboles proportionnels)
+- modifier la symbologie, appliquer la charte graphique
+- créer des cartes avancées (flux...)
+
+GESTION DE PROJET : 
+
+- actualisation études récurrentes
+- reproduction étude dans un autre périmètre
+- reparamétrage de chaînes de traitements
+- mise en place et application chaînes de traitement (à partir d’un ou plusieurs documents méthodo notamment)
+- analyse assistée
+
+6.2. Synthèse des principaux cas d’usages
+
+Cette analyse a permis de dégager neuf principaux cas d’usages :
+
+- 1. Connaissance des données Audiar (source, dernière mise à jour/dernière données disponibles, attributs...)
+- 2. Extraction de données depuis une table en base (filtre)
+- 3. Manipulation de fichiers Excel, traitements de données assistés
+- 4. Édition de tables, enrichissement web/sémantique, classifications
+- 5. Géomatique et cartographie
+- 6. Analyse assistée
+- 7. Outils d’exploration (tableaux de bord Excel, Power BI, web, SIG...)
+- 8. Actualisation / reproduction de chaînes de traitements voire d’une étude + reproduction avec nouveaux paramètres
+- 9. Conception et mise en place chaîne de traitement à partir d’un ou plusieurs documents de méthodologie (mode projet)
+
+
+
+6.3. Fiches cas d’usage
+
+Enfin, les cas d’usage ont été analysés individuellement, afin de préciser, pour chacun d’entre eux, le problème principal, les utilisateurs cibles, la phase d’exploitation concernée, le résultat attendu.
+
+Chaque fiche sera complétée après l’analyse technique, qui permettra de préciser les outils IA pouvant être envisagés, d’anticiper la complexité de mise en œuvre et d’utilisation, les contraintes qu’ils généreront et les prérequis au développement de l’outil. Les projets pouvant être développés rapidement tout en générant des résultats positifs à court terme pourront être priorisés.  
+
+ CAS D’USAGE 1 : CONNAISSANCE DES DONNEES AUDIAR
+ 
+
+
+Problème
+Catalogue BDSIG difficile à appréhender : nomenclature technique, données sources et traitées mélangées, dates de mise à jour peu accessibles
+Utilisateurs
+Tous les chargés d'études
+Phase
+Collecte
+Données en entrée
+Métadonnées BDSIG et serveur K ; documentation interne
+Résultat attendu
+Questions et réponses en langage naturel : "Dernière donnée disponible sur le logement social ?", "Attributs de la table emploi ?"
+Outils envisagés
+Open WebUI + RAG
+Complexité de mise en œuvre
+Élevée — catalogue de métadonnées structuré à construire en prérequis ; déploiement RAG
+Complexité d'utilisation
+Faible — interface en langage naturel, accessible à tous les profils
+Impact
+Élevé — difficulté très fréquente, tous profils, fort levier d'autonomie
+Risques
+Fiabilité dépendante de la qualité du catalogue ; obsolescence si non maintenu ; réponses incorrectes difficiles à détecter sans connaître les données
+Contraintes
+Charge de maintenance du catalogue (pôle données), gestion données sensibles
+Prérequis
+Structuration préalable du catalogue (dates MAJ, attributs, sources, périmètres)
+ 
+ 
+CAS D’USAGE 2 : EXTRACTION DE DONNEES DEPUIS UNE TABLE EN BASE
+ 
+
+
+Problème
+Fichiers trop lourds pour Excel (fichiers fonciers, base éco, GTFS) >>> recours au pôle données/collègues plus technique ou maîtrise SQL requise
+Utilisateurs
+Tous les chargés d'études
+Phase
+Collecte / préparation
+Données en entrée
+Tables BDSIG (PostgreSQL/PostGIS) ; fichiers lourds
+Résultat attendu
+Extraction ciblée en langage naturel >>> CSV/Excel exploitable
+Outils envisagés
+Open WebUI + MCP BD ; Claude Desktop + MCP BD ; VS Code + Cline
+Complexité de mise en œuvre
+Moyenne-élevée — technologie text-to-SQL mature, adaptation au schéma Audiar et sécurisation des accès à faire
+Complexité d'utilisation
+Faible à moyenne — langage naturel accessible, mais vérification des résultats requiert un minimum de culture données
+Impact
+Élevé — réduit la dépendance au pôle données sur des tâches de collecte fréquentes
+Risques
+Erreurs SQL silencieuses (mauvaise jointure, mauvais filtre) difficiles à détecter sans expertise ; accès aux données sensibles à contrôler si solution non souveraine
+Contraintes
+Gestion données sensibles >>> solution souveraine (Open WebUI auto-hébergé ou RAGaRenn)
+Prérequis
+Accès BD sécurisé depuis outil IA ; schéma de données documenté et accessible au modèle ou détermination des tables cibles
+ 
+
+ CAS D’USAGE 3 : MANIPULATION EXCEL ET TRAITEMENTS DE DONNEES ASSISTES
+ 
+
+
+Problème
+Traitements courants chronophages ou bloquants : jointures, agrégations, mise en forme conditionnelle, gestion multi-tableaux
+Utilisateurs
+Tous les chargés d'études ; profils intermédiaires en particulier
+Phase
+Préparation / exploration
+Données en entrée
+Fichiers Excel, CSV issus d'extractions
+Résultat attendu
+Formules générées, TCD créés, jointures réalisées, mises en forme appliquées
+Outils envisagés
+Extension application (Copilot Excel, extension Claude Excel) ; Claude Desktop ; Open WebUI ; VS Code + Cline
+Complexité de mise en œuvre
+Faible — outils déjà disponibles
+Complexité d'utilisation
+Faible à moyenne — prise en main rapide, mais vérification des résultats indispensable
+Impact
+Élevé — cas d'usage le plus transversal, gains de temps immédiats sur tous les profils
+Risques
+Erreurs dans les formules générées ; perte de maîtrise si l'utilisateur ne comprend pas le traitement produit
+Contraintes
+Contrôle pas à pas à favoriser >>> extension application ou Claude Desktop préférables à Open WebUI ; données sensibles >>> solution souveraine (OVH Cloud, RAGaRenn)
+Prérequis
+Formation minimale à la vérification des résultats
+ 
+
+CAS D’USAGE 4 : ÉDITION DE TABLES, ENRICHISSEMENT ET CLASSIFICATIONS
+ 
+
+
+Problème
+Tâches d'enrichissement chronophages à faible valeur ajoutée : saisie depuis PDF, collecte web, classifications manuelles de grandes listes
+Utilisateurs
+Tous les chargés d'études
+Phase
+Préparation / enrichissement
+Données en entrée
+PDF structurés ou non ; pages web ; tables avec champs textuels à catégoriser ; listes d'adresses
+Résultat attendu
+Table structurée issue de PDF ; table enrichie depuis le web ; colonne de classification générée ; descriptions automatiques ; adresses géocodées
+Outils envisagés
+Claude Desktop ; Open WebUI ; VS Code + Cline ; + RAG documentation
+Complexité de mise en œuvre
+Faible (extraction PDF, classifications simples) à élevée (enrichissement sémantique : base vectorielle à déployer)
+Complexité d'utilisation
+Faible à moyenne — extraction et classification accessibles ; enrichissement sémantique plutôt pour les profils avancés
+Impact
+Moyen-élevé — supprime des tâches répétitives sans valeur ajoutée analytique
+Risques
+Erreurs de classification difficiles à contrôler sur grands volumes ; données sensibles dans certains PDF
+Contraintes
+PDF contenant des données sensibles >>> solutions souveraines (RAGaRenn, OVH Cloud) ; scraping web : légalité à vérifier selon les sources ; enrichissement sémantique >>> base vectorielle à héberger en interne
+Prérequis
+Pour enrichissement sémantique : infrastructure base vectorielle (Postgre ou Qdrant) ; pour scraping : vérification des CGU des sources
+ 
+ 
+
+
+CAS D’USAGE 5 : GEOMATIQUE ET CARTOGRAPHIE
+ 
+
+
+Problème
+QGIS complexe pour un usage souvent partiel ; blocages fréquents sur les opérations géomatiques et la mise en forme cartographique >>> recours au cartographe ou au pôle données
+Utilisateurs
+Tous les chargés d'études utilisant QGIS ; cartographe (Gilles Belleil)
+Phase
+Analyse / valorisation
+Données en entrée
+Projets QGIS ; couches géo ; tables attributaires
+Résultat attendu
+Cartes thématiques produites/mises à jour ; opérations géomatiques réalisées (jointures spatiales, tampons, fusions) ; symbologie et charte graphique appliquées
+Outils envisagés
+MCP QGIS (Claude Desktop ; Open WebUI ; VS Code + Cline) ; prompt system/skills (Claude Desktop ; VS Code + Cline ; Open WebUI)
+Complexité de mise en œuvre
+Moyenne — MCP QGIS encore expérimental, à stabiliser ; génération de scripts Python plus mature
+Complexité d'utilisation
+Moyenne — nécessite de savoir lire et vérifier les opérations produites dans QGIS
+Impact
+Élevé — difficulté très fréquente, fort potentiel de gain d'autonomie sur tous les profils
+Risques
+Erreurs géomatiques difficiles à détecter (mauvaise projection, jointure incorrecte) ; instabilité du MCP QGIS en phase expérimentale
+Contraintes
+MCP QGIS nécessite une installation sur le poste local
+Prérequis
+Configuration MCP QGIS sur les postes ; fonds de cartes de référence à jour accessibles ; capacité de vérification des résultats
+ 
+
+CAS D’USAGE 6 : ANALYSE ASSISTEE
+
+
+
+Problème
+Temps d'analyse contraint par les traitements en amont ; souhait d'un premier niveau d'exploration et d'interprétation avant validation par le chargé d'études
+Utilisateurs
+Chargés d'études souhaitant approfondir l'analyse (intérêt exprimé par 6-7 personnes) ; profils intermédiaires à avancés
+Phase
+Analyse
+Données en entrée
+Tables Excel/CSV de résultats ; exports TCD ; données géo avec attributs statistiques ; séries temporelles
+Résultat attendu
+Description statistique (distributions, valeurs remarquables) ; tendances et anomalies identifiées ; hypothèses formulées ; comparaisons territoriales...
+Outils envisagés
+Claude Desktop ; Open WebUI ; VS Code + Cline
+Complexité de mise en œuvre
+Faible à moyenne — outils disponibles ; paramétrage du contexte (données, méthodo) à soigner
+Complexité d'utilisation
+Moyenne — nécessite de savoir formuler la demande et critiquer les résultats ; compétences en statistique descriptive nécessaires pour le contrôle
+Impact
+Élevé — répond au besoin central (dégager du temps pour l'analyse)
+Risques
+Erreurs statistiques silencieuses (ex. moyenne de moyenne) ; délégation excessive de l'interprétation à l'IA
+Contraintes
+Complexité variable selon les thématiques (habitat, emploi, foncier...)
+Prérequis
+Données structurées et documentées en entrée ; capacité à vérifier les résultats produits
+
+
+
+CAS D’USAGE 7 : OUTILS D’EXPLORATION (TABLEAUX DE BORD, SIG, WEB)
+ 
+
+
+Problème
+Création et mise à jour d'outils de suivi internes souvent confiée au pôle données ; délais et dépendance selon le type d'outil
+Utilisateurs
+Chargés d'études responsables de suivis thématiques ; profils intermédiaires à avancés
+Phase
+Exploration / valorisation
+Impact
+Moyen-élevé — réduit la dépendance au pôle données pour les outils de suivi
+Risques
+Maintenance des outils créés (portabilité si le chargé d'études quitte le poste) ; prolifération d'outils non documentés ; compatibilité SI
+ 
+ Cas d’usage 7a : Tableau de bord Excel
+ 
+
+
+Données en entrée
+Fichiers Excel, CSV consolidés ; exports BDSIG
+Résultat attendu
+TCD + graphiques dynamiques ; mise en forme conditionnelle ; intégration multi-fichiers CSV
+Outils envisagés
+Extension application (Copilot Excel) ; Claude Desktop ; Open WebUI
+Complexité de mise en œuvre
+Faible — outils disponibles
+Complexité d'utilisation
+Faible à moyenne
+Contraintes
+Données sensibles >>> extension application (données dans le tenant Microsoft 365) ou Claude Desktop (local)
+Prérequis
+Fichiers de données stables en structure
+ 
+ 
+Cas d’usage 7b : Interface web HTML / dataviz
+
+
+
+Données en entrée
+Tables CSV ou JSON ; données BDSIG exportées ; données API
+Résultat attendu
+Page HTML interactive (graphiques, filtres, tableaux) consultable en interne
+Outils envisagés
+VS Code + Cline ; Claude Desktop ; Open WebUI
+Complexité de mise en œuvre
+Moyenne — itérations et débogage nécessitent un minimum de lecture de code
+Complexité d'utilisation
+Moyenne à élevée sans compétences en lecture de code
+Contraintes
+Outils créés doivent être hébergés
+Prérequis
+Profil avancé en appui ou compréhension minimale programmation informatique ; politique d'hébergement interne
+ 
+ 
+Cas d’usage 7c : Tableau de bord Power BI
+ 
+
+
+Données en entrée
+Tables BDSIG ; fichiers Excel/CSV ; données API
+Résultat attendu
+Rapport Power BI publié en interne ; indicateurs mis à jour automatiquement
+Outils envisagés
+Extension application (Copilot Power BI) ; outil IA (Claude desktop, VS Code + cline) + MCP
+Complexité de mise en œuvre
+Élevée — connexion aux sources, modélisation, publication à configurer
+Complexité d'utilisation
+Élevée — Power BI est un outil expert
+Contraintes
+Données doivent être restructurées pour être exploitables ; effort de conception
+Prérequis
+Connecteurs BD ; préparation des données
+ 
+ 
+
+
+Cas d’usage 7d : Carte ou SIG de suivi
+ 
+
+
+Données en entrée
+Couches géo ; tables attributaires de suivi
+Résultat attendu
+Projet QGIS de suivi mis à jour ; carte de synthèse exportée ; carte web interactive
+Outils envisagés
+MCP QGIS + (Claude Desktop ; VS Code + Cline ; Open WebUI)
+Complexité de mise en œuvre
+Moyenne — MCP QGIS expérimental ; carte web plus complexe
+Complexité d'utilisation
+Moyenne — vérification des opérations dans QGIS requise
+Contraintes
+MCP QGIS à installer localement
+Prérequis
+Configuration MCP QGIS sur les postes ; données géo à jour accessibles
+ 
+ 
+CAS D’USAGE 8 : ACTUALISATION ET REPRODUCTION DE CHAÎNES DE TRAITEMENTS
+ 
+
+
+Problème
+Mises à jour d'études récurrentes (observatoires, bilans) chronophages et peu valorisantes ; reproductions sur d'autres périmètres nécessitant un reparamétrage complet
+Utilisateurs
+Chargés d'études responsables de suivis récurrents
+Phase
+Transversal (traitement >>> valorisation)
+Données en entrée
+Nouveaux millésimes de données ; projets QGIS et fichiers Excel version précédente ; paramètres du nouveau périmètre
+Résultat attendu
+Chaîne réexécutée avec nouvelles données ; cartes et graphiques mis à jour ; livrables régénérés ; ou étude reproduite sur nouveau territoire
+Outils envisagés
+VS Code + Cline ; Claude Desktop ; outils types Cowork open source
+Complexité de mise en œuvre
+Moyenne-élevée — dépend du degré de formalisation de la chaîne existante ; chaîne non documentée = point de départ difficile
+Complexité d'utilisation
+Moyenne-élevée — nécessite de comprendre la chaîne pour valider chaque étape ; profil intermédiaire à avancé
+Impact
+Élevé — libère du temps sur des tâches peu valorisantes, réduit les erreurs, mutualisation possible
+Risques
+Erreurs de reparamétrage difficiles à détecter ; maintenance si structure des données sources évolue
+Contraintes
+Travailler en local ou sur copie locale, pas directement sur le serveur K partagé
+Prérequis
+Chaîne de traitements existante documentée (ou à formaliser en amont) ; données sources stables en structure ; accès IA à l'ensemble des fichiers du projet
+ 
+ 
+
+
+CAS D’USAGE 9 : CONCEPTION ET MISE EN PLACE D’UNE CHAÎNE DE TRAITEMENTS
+ 
+
+
+Problème
+Mise en place d'une nouvelle chaîne à partir de documents méthodo : long, complexe à synthétiser et concevoir
+Utilisateurs
+Chargés d'études sur études complexes ; pôle Données en co-conception
+Phase
+Transversal (collecte >>> valorisation)
+Données en entrée
+Documents de méthodologie (PDF, notes internes, guides nationaux) ; données sources à identifier ; projets QGIS/Excel existants
+Résultat attendu
+Données en entrée identifiées ; chaîne conçue étape par étape ; outils paramétrés ; traitements exécutés ; premiers résultats et livrables produits
+Outils envisagés
+VS Code + Cline ; Claude Desktop ; outils types Cowork open source
+Complexité de mise en œuvre
+Élevée — infrastructure mode projet à définir et stabiliser ; stack technique à choisir
+Complexité d'utilisation
+Élevée — maîtrise du mode projet indispensable ; profil avancé requis pour la validation à chaque étape
+Impact
+Très élevé — potentiel transformateur sur la conduite des études ; réduit le temps de montée en charge sur une nouvelle méthodo
+Risques
+Interprétation erronée de la méthodo >>> erreurs en cascade ; forte dépendance à la qualité des documents sources ; maintenance dans le temps
+Contraintes
+Travailler en local ou sur copie locale, pas directement sur le serveur K partagé
+Prérequis
+Documents méthodo structurés et accessibles à l'IA ; accès à l'ensemble des fichiers ; utilisateur avancé pour validation à chaque étape ; infrastructure mode projet opérationnelle
+
+6.4. Critères de réussite
+
+Les tests menés sur les cas d’usages seront évalués selon quatre critères, inspirés des modèles d’acceptation des technologies (TAM, UTAUT) :
+
+- l’utilité perçue : l’outil apporte-t-il une valeur métier réelle, identifiée par les chargés d’études eux-mêmes ? Un outil jugé inutile ne sera pas adopté, quelles que soient ses qualités techniques ;
+- la facilité d’usage : quel effort demande son adoption, dans le contexte organisationnel et technique de l’agence ? Ce critère comprend l’ergonomie de l’outil, mais aussi le paramétrage, la formation nécessaire et la compatibilité avec les processus existants, avec une appréciation différente selon les profils techniques ;
+- la fiabilité : les résultats produits sont-ils justes et constants ? La confiance des utilisateurs se construit sur cette fiabilité, elle se perd rapidement en cas d’erreurs répétées ;
+- le bilan bénéfices/coûts : au global, le gain apporté (temps, autonomie, qualité) compense-t-il les coûts, les risques et les contraintes générés (vérification, maintenance, formation) ?
+
+Ces critères serviront à la fois à prioriser les cas d’usages à tester et à évaluer les expérimentations menées.
+
+
+ 
+
+
+7. CONTRAINTES, ENJEUX ET RISQUES
+
+L’analyse des usages et des besoins a fait apparaître un ensemble de contraintes, d’enjeux et de risques. Ils conditionnent le déploiement des outils IA et devront être intégrés à l’analyse technique. Ils sont présentés ici en quatre familles : contraintes d’usage, contraintes organisationnelles, enjeux humains et collectifs, enjeux technologiques et externes.
+
+Quel que soit l’outil utilisé, l’IA ne supprime pas les contraintes propres aux données. Leur qualité, leur complémentarité, leur documentation (métadonnées) restent des conditions de la fiabilité des analyses.
+
+7.1. Contraintes d’usage
+
+Le premier ensemble de contraintes concerne les chargés d’études dans leur pratique quotidienne. Il dessine, en creux, les compétences que l’usage de l’IA mobilise et développe.
+
+CONTRÔLE DES OPÉRATIONS  
+C’est la contrainte centrale : l’IA ne doit pas fonctionner comme une boîte noire. Le chargé d’études doit pouvoir comprendre, vérifier et valider les traitements réalisés. Cette exigence prolonge un principe déjà établi à l’agence : la maîtrise de la logique et des limites des traitements mis en œuvre dans chaque étude.
+
+VÉRIFICATION ET ESPRIT CRITIQUE  
+Ce contrôle implique de nouvelles tâches : suivi des étapes intermédiaires, vérification des résultats, relecture critique des productions. Certaines erreurs sont silencieuses et difficiles à détecter (jointure incorrecte, filtre erroné, moyenne de moyennes). L’esprit critique et les compétences méthodologiques et statistiques restent donc indispensables : ils conditionnent un usage fiable de l’IA. Le temps gagné sur les traitements se déplace en partie vers ces tâches de contrôle. Cette vigilance est d’autant plus nécessaire que l’IA produit des résultats fluides, assurés, même lorsqu’ils sont erronés, ce qui peut donner un sentiment de maîtrise supérieur à la maîtrise réelle.
+
+DISCERNEMENT 
+Une compétence nouvelle émerge : savoir quand recourir à l’IA, et quand s’en passer. Toutes les tâches ne s’y prêtent pas. Certaines sont réalisées plus vite sans elle, d’autres perdent à être déléguées, parce qu’elles construisent la connaissance du sujet ou des données, d’autres encore demandent un effort de vérification supérieur au temps gagné. Ce discernement s’exerce à deux niveaux. Le cadre d’utilisation défini par l’agence (voir partie 7.2.) fixe les limites collectives : outils, données, usages à éviter. À l’intérieur de ce cadre, le jugement appartient au chargé d’études, au cas par cas, selon la tâche, les données, le projet et sa propre maîtrise de l’outil. Ce jugement s’affine avec la pratique ; il constitue à ce titre un objet de formation et de partage d’expériences.
+
+FORMALISATION DU TRAVAIL  
+Enfin, l’usage de l’IA suppose une montée en formalisation : structuration des projets, organisation des consignes, rédaction des prompts. Les modes de fonctionnement de chacun sont plus ou moins « IA-compatibles ». Cette dimension devra être prise en compte dans l’accompagnement.
+
+
+
+7.2. Contraintes organisationnelles
+
+Le deuxième ensemble concerne l’agence dans son ensemble et notamment le pôle Données.
+
+MAINTENANCE ET PASSAGE A L’ÉCHELLE  
+Le passage d’expérimentations individuelles à un outillage commun transforme la nature des outils : ils deviennent des outils Audiar, dont la maintenance, la sécurité et l’évolution doivent être assurées dans la durée. Cette charge reposerait principalement sur le pôle Données. Elle inclut la maintenance de ressources nouvelles (skills, prompts systèmes, serveurs MCP...), dont la responsabilité reste à définir.
+
+PARTAGE DES RESSOURCES  
+Les pratiques individuelles produisent des ressources réutilisables : prompts, paramétrages, tableaux de bord, métadonnées. Leur mise en commun est une condition d’efficacité collective. Elle suppose des espaces et des règles de partage.
+
+CADRE D’UTILISATION  
+Plusieurs attentes concernent le cadre d’utilisation de l’IA, notamment en ce qui concerne les outils à mobiliser, et plus largement les cas où il est opportun d’utiliser l’IA et ceux où il faut l’éviter, même si cet aspect concerne aussi le jugement individuel. Parmi les autres éléments intégrant le cadre d’utilisation de l’IA figurent la cohérence des études entre elles et l’organisation des projets et des espaces de travail. Ce cadre est d’autant plus stratégique qu’en son absence, l’usage fait la norme : les pratiques de certains utilisateurs peuvent s’imposer comme standard, sans discussion ou validation collective.
+
+VEILLE ET ÉVALUATION  
+La technologie évolue rapidement, avec l’arrivée régulière de nouveaux modèles, nouveaux outils et nouvelles pratiques. Rester à la page demande du temps. La question de la veille (qui l’assure, comment ses résultats sont mutualisés, comment les modèles sont évalués ?) sera un point à trancher.
+
+RESPONSABILITÉS  
+La répartition des rôles dans la gestion des paramètres IA, la sécurité du système d’information et l’administration des outils devra être clarifiée entre le pôle Données, la mission informatique et les utilisateurs.
+
+7.3.	 Enjeux humains et collectifs
+
+AUTONOMIE ET COLLABORATION  
+L’IA renforce l’autonomie des chargés d’études, ce qui comporte un revers : une fragmentation possible des pratiques, une perte de standards communs, un affaiblissement de la capacité à coopérer et à comprendre les autres métiers. L’équilibre entre autonomie et prescription est un enjeu central de la stratégie à définir.
+
+INCLUSIVITÉ, SAVOIR-FAIRE ET SATISFACTION AU TRAVAIL  
+Tous les collaborateurs ne souhaitent pas, ou ne peuvent pas, utiliser l’IA au même degré. Par ailleurs, certaines tâches susceptibles d’être confiées à l’IA peuvent aujourd’hui être des sources de satisfaction professionnelle. Le maintien d’alternatives à l’IA est un principe posé par la direction.
+
+TRANSMISSION ET EXPERTISE  
+L’IA est d’autant plus fiable qu’elle est utilisée par un expert, qui connaît les données qu’il mobilise et leurs limites, avec un contrôle des opérations effectuées et des résultats, ce qui est permis par les compétences techniques des chargés d’études. Si l’on considère que les chargés d’études peuvent exploiter pertinemment l’IA car ils maîtrisent les opérations qu’ils lui demandent, alors la question de la transmission des savoirs et savoir-faire au sein de l’agence est un enjeu, car les jeunes professionnels ne disposent pas du même niveau d’expertise.
+
+7.4. Enjeux technologiques et externes
+
+DONNÉES SENSIBLES ET SOUVERAINETÉ  
+Certaines données mobilisées par l’agence sont sensibles ou propriétaires (données Acoss-Urssaf, fichiers fonciers...). Le choix des modèles et de leur hébergement en découle directement. 
+
+INSTABILITÉ ET PÉRENNITÉ  
+La technologie est en plein développement : les outils, les modèles et les bonnes pratiques (rédaction des prompts notamment) évoluent rapidement. Le risque d’obsolescence est réel, et le remplacement d’un outil déployé créerait des difficultés. La stabilité et la fiabilité des solutions retenues devront peser dans les choix techniques.
+
+ENVIRONNEMENT  
+Limiter l’impact environnemental de l’IA à l’agence est l’un des objectifs du projet. Les consommations varient pourtant sensiblement selon les modèles et les usages. Cet enjeu pourra être objectivé et intégré aux critères de choix.
+7.5. À retenir
+
+Les contraintes et enjeux identifiés dépassent la seule dimension technique. Ils portent sur le contrôle des traitements, l’organisation collective, la transmission de l’expertise et la pérennité des choix technologiques.
+
+Le déploiement des outils IA devra s’accompagner d’un cadre d’utilisation, d’une organisation de la maintenance et de la veille, et d’une attention aux dynamiques collectives.
+
+
+
+
+CONCLUSION
+
+L’Audiar est à la fois experte et diverse dans son rapport aux données. Les processus d’exploitation varient selon les projets, les contextes et les profils. L’usage de l’IA générative, quasi généralisé, reproduit cette diversité. Les attentes sont fortes (gagner du temps, gagner en autonomie, ne pas se laisser distancer) mais s’accompagnent de frustrations : accès limité aux licences, limites des outils actuels, besoin de formation.
+
+Les expérimentations menées montrent que le succès repose sur deux conditions : la qualité des requêtes formulées et la capacité des modèles mobilisés. La démarche relève de l’essai-erreur, et suppose des chargés d’études en mesure de vérifier et de contrôler le travail de l’IA. Cette démarche aura intérêt à être capitalisée : objectiver les gains (de temps en particulier) selon les tâches permettra de confronter les attentes aux résultats réels, et d’orienter les priorités.
+
+Cette exigence de maîtrise, aujourd’hui ancrée dans la culture de l’agence pour les données, devra s’étendre aux outils d’IA. Un même prisme de technicité est ainsi à prévoir pour l’IA que pour les données : les différences d’objectifs, de compétences et de modes de raisonnement propres à chaque chargé d’études impliquent une approche différenciée des outils et de la manière de les utiliser.
+
+Les entretiens montrent aussi que les outils IA s’ajoutent à l’environnement de travail existant, plus qu’ils ne le remplacent. Ils se connectent à Excel, QGIS, aux bases de données, notamment au moyen des serveurs MCP. Cela invite à privilégier des solutions permettant cet interfaçage avec les outils existants.
+
+Les neuf cas d’usages identifiés, les contraintes et les enjeux relevés sont la base sur laquelle s’appuiera la suite du projet. L’analyse technique permettra d’examiner les architectures envisageables, de la solution clé en main à la plateforme interne, et de compléter les fiches cas d’usage. Elle devra composer avec un paysage technologique mouvant, où les usages de demain ne sont pas encore tous imaginés. 
+4 | AUDIAR | Données & IA - Analyse fonctionnelle                                                           	JUILLET 2026 |
+
+22 | AUDIAR | Données & IA - Analyse fonctionnelle                                                                	JUILLET 2026 |
+
+| JUILLET 2026 		Données & IA - Analyse fonctionnelle |AUDIAR| 3
+

@@ -4,7 +4,7 @@ Guides d'installation, d'usage et d'onboarding.
 
 ## Installer Open WebUI en local (prototype, poste de travail)
 
-Framework retenu : voir `docs/architecture/decision-framework.md`. L'instance "Open WebUI Audiar" n'existe pas encore — ce guide décrit son premier déploiement, en local sur un poste Windows, avant d'envisager un hébergement partagé.
+Framework retenu : voir `docs/architecture/decision-framework.md`. L'instance "Open WebUI Audiar" n'existe pas encore. Ce guide décrit son premier déploiement, en local sur un poste Windows, avant d'envisager un hébergement partagé.
 
 ### Prérequis
 
@@ -17,29 +17,26 @@ Framework retenu : voir `docs/architecture/decision-framework.md`. L'instance "O
 
 Ouvrir un terminal (PowerShell, ou Git Bash intégré à VS Code — les commandes `docker` sont identiques dans les deux) et taper :
 
-```
-docker --version
-docker ps
+```bash
+docker --version # vérif n° de version
+docker ps # liste application docker (docker doit être lancé)
 ```
 
-- `docker --version` doit afficher un numéro de version (ex. `Docker version 27.x.x`).
-- `docker ps` doit afficher un tableau vide (colonnes CONTAINER ID, IMAGE, ...) sans message d'erreur. Un message d'erreur du type "Cannot connect to the Docker daemon" signifie que Docker Desktop n'est pas lancé — l'ouvrir depuis le menu Démarrer et réessayer.
-
-### Étape 2 — Lancer Open WebUI
+### Étape 2 — Installer et lancer Open WebUI
 
 Dans le même terminal :
 
-```
+```bash
 docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
 ```
 
 Détail de la commande :
 - `-d` : lance le conteneur en arrière-plan.
-- `-p 3000:8080` : rend l'interface accessible sur `http://localhost:3000`.
+- `-p 3000:8080` : rend l'interface accessible sur `http://localhost:3000` (8080 = port dans le conteneur Docker).
 - `-v open-webui:/app/backend/data` : les données (comptes, conversations, config) sont conservées même si le conteneur est recréé.
 - `--restart always` : Open WebUI redémarre automatiquement avec Docker Desktop.
 
-Le premier lancement télécharge l'image (plusieurs centaines de Mo) — peut prendre quelques minutes.
+Le premier lancement télécharge l'image (plusieurs centaines de Mo, peut prendre quelques minutes).
 
 ### Étape 3 — Créer le compte admin
 
@@ -47,31 +44,24 @@ Ouvrir `http://localhost:3000` dans un navigateur. Le premier compte créé devi
 
 ### Étape 4 — Vérifier la version
 
-Deux méthodes (équivalentes) :
+Le fichier JSON disponible à l'adresse http://localhost:3000/api/config indique dans les premiers champs la version d'Open WebUI installée.
 
-**Méthode 1 — via l'API (rapide)** :
-Ouvrir dans le navigateur : `http://localhost:3000/api/config`
+Le numéro de version est aussi indiqué dans le menu "A propos" du panneau "Réglages", accessible en cliquant sur la bulle "Profil" (en haut à droite ou en bas à gauche).
 
-Tu vas voir un JSON avec :
-```json
-{
-  "version": "0.10.2",
-  ...
-}
+### Étape 5 — Lancer Open web UI une fois installé
+
+```bash
+docker start open-webui # open webui lancé en arrière-plan
 ```
 
-Noter le numéro — utile pour savoir si l'installation est à jour et pour vérifier la compatibilité d'éventuelles futures fonctionnalités.
-
-**Méthode 2 — via l'interface** :
-Icône de profil (en haut à droite) → **Réglages** → onglet **Général** → voir la ligne "Version".
 
 ## Configurer les serveurs MCP
 
-Une fois Open WebUI installé, on peut connecter les serveurs MCP métier (QGIS, PostgreSQL, filesystem...).
+Plusieurs serveurs MCP métier doivent être installaés : QGIS, PostgreSQL, filesystem, Excel en particulier.
 
 ### Principe général
 
-Chaque serveur MCP est exposé via **`mcpo`** (proxy MCP → OpenAPI, [open-webui/mcpo](https://github.com/open-webui/mcpo)), puis ajouté dans Open WebUI comme connexion **OpenAPI** (pas MCP natif). Raison de ce choix, valable pour tous les serveurs métier du projet : voir `servers/mcp-qgis/README.md`, section "Pourquoi `mcpo` et pas le support MCP natif d'Open WebUI".
+Chaque serveur MCP est exposé via **`mcpo`** (proxy MCP → OpenAPI, [open-webui/mcpo](https://github.com/open-webui/mcpo)), puis ajouté dans Open WebUI comme connexion **OpenAPI** (pas MCP natif). Raison de ce choix, valable pour tous les serveurs métier du projet : voir `docs/architecture/decision-framework.md`, section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`".
 
 ### Où configurer les serveurs
 
@@ -82,6 +72,25 @@ C'est là qu'on ajoute chaque connexion. Un bouton **"+"** permet d'en créer un
 ### mcp-filesystem
 
 Priorité plus basse que `mcp-qgis` (voir ci-dessous) — pas encore mis en place. Même principe attendu (serveur exposé via `mcpo`, connexion OpenAPI côté Open WebUI) ; pas-à-pas à écrire une fois ce serveur configuré à son tour.
+
+## Paramétrer les droits Open WebUI (instance mutualisée)
+
+Prérequis générique, valable pour tout serveur MCP métier exposé via `mcpo` — pas spécifique à un serveur en particulier (justification technique complète : `docs/architecture/decision-framework.md`, section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`").
+
+- Version Open WebUI ≥ 0.6.31 pas nécessaire pour ce montage (on utilise OpenAPI, pas le MCP natif) — utile seulement si un autre outil MCP natif est ajouté par ailleurs.
+- Instance mutualisée : deux réglages distincts nécessaires côté admin, tous deux désactivés par défaut —
+  1. **Toggle global** : *Admin Panel → Settings → Connections → "Direct Connections"* → ON (sans lui, personne — même un admin — n'a accès aux connexions directes). En français : *Panneau d'administration → Réglages → Connexions → « Direct connexions »*.
+  2. **Permission par utilisateur/groupe** : *Admin Panel → Users → Groups → Default permissions (ou un groupe dédié) → Features → "Direct Tool Servers"* → ON. En français : *Panneau d'administration → Utilisateurs → Groupes → « Modifier les autorisations par défaut » → section « Autorisations des fonctionnalités » → toggle « Serveur d'outils directs »* (confirmé sur l'instance de Charlotte le 20/07/2026 — désactivé par défaut).
+
+## Checklist de déploiement d'un nouveau serveur MCP (instance mutualisée)
+
+Modèle générique à appliquer avant de proposer un nouveau serveur MCP aux chargés d'études (au-delà de `mcp-qgis`, déjà appliqué et validé — statut détaillé dans `servers/mcp-qgis/README.md`) :
+
+1. Packager sur chaque poste le lancement conjoint de la chaîne locale complète (ex. pour QGIS : plugin QGIS MCP démarré automatiquement à l'ouverture de QGIS → `mcpo`, qui lance lui-même le serveur MCP) — idéalement un script unique, pas plusieurs manipulations manuelles par un profil non-développeur.
+2. Vérifier que le navigateur (onglet Open WebUI) peut effectivement atteindre `http://localhost:<port>` de `mcpo` sans blocage CORS/mixed-content (Open WebUI en HTTPS appelant un `localhost` en HTTP peut être bloqué par certains navigateurs — à tester en conditions réelles).
+3. Chaque chargé d'études ajoute lui-même l'URL de son `mcpo` local dans *Settings → Integrations → Manage Tool Servers* (FR : *Réglages → Intégrations → Gérer les serveurs d'outils*) — paramètre personnel, pas partageable entre postes.
+
+Statut d'application de cette checklist par serveur : documenté dans le README du serveur concerné (`servers/mcp-<nom>/README.md`).
 
 ## Configurer mcp-qgis (premier serveur MCP mis en place)
 
@@ -131,7 +140,7 @@ Fermer cette fenêtre, puis dans le panneau QGIS MCP principal, cliquer sur **"S
 
 ### Étape 3 — Lancer le serveur MCP via `mcpo`
 
-`qgis-mcp-server` est exposé via **`mcpo`** (proxy MCP → OpenAPI, [open-webui/mcpo](https://github.com/open-webui/mcpo)) plutôt qu'en connexion MCP native directe — raison détaillée dans `servers/mcp-qgis/README.md` ("Pourquoi `mcpo` et pas le support MCP natif d'Open WebUI"). `mcpo` lance lui-même `qgis-mcp-server` en sous-processus (transport `stdio`) et expose une API OpenAPI classique.
+`qgis-mcp-server` est exposé via **`mcpo`** (proxy MCP → OpenAPI, [open-webui/mcpo](https://github.com/open-webui/mcpo)) plutôt qu'en connexion MCP native directe — raison détaillée dans `docs/architecture/decision-framework.md` (section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`"). `mcpo` lance lui-même `qgis-mcp-server` en sous-processus (transport `stdio`) et expose une API OpenAPI classique.
 
 Dans Git Bash :
 

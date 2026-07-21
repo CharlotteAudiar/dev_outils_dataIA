@@ -6,7 +6,7 @@ Recherche comparative ayant nourri les décisions documentées dans `decision-fr
 
 **Cadrage retenu** : le développement se concentre d'abord sur les cas d'usage 1 (connaissance des données Audiar / catalogue), 2 (extraction depuis une table en base), 3 (manipulation Excel assistée) et 5 (géomatique/QGIS) de l'analyse fonctionnelle. Le framework doit fonctionner en **mode projet** : accès à un dossier de travail complet, exécution autonome de tâches multi-étapes, appel d'outils MCP (QGIS, Postgres, Excel, filesystem) — sur le modèle de Claude Cowork/Claude Code, plutôt qu'une simple interface de chat avec appel d'outil ponctuel.
 
-**Note de méthode** : l'évaluation ne s'appuie pas sur les outils mentionnés dans les fiches cas d'usage de l'analyse fonctionnelle (`draft/2026_IA&BD_Analyse fonctionnelle_V1.txt`) — ces mentions reflétaient les outils déjà testés empiriquement par les chargés d'études au moment des entretiens, pas une évaluation comparative. Chaque candidat est jugé sur ses caractéristiques propres.
+**Note de méthode** : l'évaluation ne s'appuie pas sur les outils mentionnés dans les fiches cas d'usage de l'analyse fonctionnelle (`docs/sources/2026_analyse-fonctionnelle_V1.txt`) — ces mentions reflétaient les outils déjà testés empiriquement par les chargés d'études au moment des entretiens, pas une évaluation comparative. Chaque candidat est jugé sur ses caractéristiques propres.
 
 Recherche limitée aux frameworks **open source et gratuits**, relevée le 17/07/2026, complétée le 20/07/2026 avec deux candidats additionnels trouvés en creusant spécifiquement la catégorie "clone open source de Claude Cowork" (**Open Cowork** et **OpenWork**), puis avec trois candidats supplémentaires signalés par Charlotte le même jour : **Jan**, **GPT4All** et **OpenHands** (ce dernier réexaminé après avoir été initialement écarté — voir sa colonne pour le détail).
 
@@ -83,6 +83,7 @@ Indicateurs de pérennité relevés le 17/07/2026 (étoiles, forks, dernière re
 |---|---|---|---|
 | crystaldba/postgres-mcp | https://github.com/crystaldba/postgres-mcp | "Postgres MCP Pro", activement maintenu. Accès lecture/écriture configurable + analyse de performance. Candidat recommandé. | ~2,4k ★ (source variable selon le moment de mesure), 259 forks — activité soutenue. |
 | modelcontextprotocol/servers-archived (src/postgres) | https://github.com/modelcontextprotocol/servers-archived/tree/main/src/postgres | Ancienne implémentation de référence Anthropic, **archivée depuis le 29/05/2025, non maintenue**. Une faille d'injection SQL contournant la restriction lecture seule y a été documentée (Datadog Security Labs) — à éviter en production. | 260 ★, 147 forks (dépôt archivé entier), **0 release, dépôt en lecture seule**. |
+| googleapis/mcp-toolbox (ex-`genai-toolbox`) — **repéré le 21/07/2026, non arbitré face au candidat retenu** | https://github.com/googleapis/mcp-toolbox | Pas un serveur dédié Postgres : framework générique multi-bases (Postgres, MySQL, BigQuery, Spanner, SQLite...), maintenu officiellement par Google. Utilisable avec un Postgres auto-hébergé générique, pas seulement Cloud SQL/AlloyDB — pas de verrouillage Google Cloud. Deux modes : "prebuilt" (`--prebuilt=postgres`, proche d'un accès SQL direct) ou configuration par fichier `tools.yaml` définissant des requêtes SQL paramétrées et figées à l'avance — approche plus contrainte/auditable que le SQL libre, cohérente avec la logique déjà retenue (mode `restricted` + rôle dédié en lecture seule). Outils de santé/perf riches (activité, locks, index, stats de requêtes, autovacuum, réplication...), comparables à postgres-mcp Pro ; pas d'équivalent identifié à l'`EXPLAIN`/recommandation d'index automatique. Pas de mode read-only natif au niveau protocole — même recommandation de défense en profondeur par rôle Postgres. Windows compatible (binaire natif ou `npx`), transport stdio/HTTP. | ~16 000 ★, ~1 600 forks, v1.0 stable depuis le 10/04/2026, rythme de release toutes les 2-3 semaines (jusqu'à v1.7 au 16/07/2026) — activité et pérennité fortes (Google, Apache 2.0). |
 
 ### mcp-excel
 
@@ -138,6 +139,10 @@ Indicateurs de pérennité relevés le 17/07/2026 (étoiles, forks, dernière re
 - https://github.com/crystaldba/postgres-mcp
 - https://github.com/modelcontextprotocol/servers-archived/tree/main/src/postgres
 - https://securitylabs.datadoghq.com/articles/mcp-vulnerability-case-study-SQL-injection-in-the-postgresql-mcp-server/
+- https://github.com/googleapis/mcp-toolbox
+- https://googleapis.github.io/genai-toolbox/
+- https://googleapis.github.io/genai-toolbox/reference/prebuilt-tools/
+- https://cloud.google.com/blog/products/databases/managed-mcp-servers-for-google-cloud-databases
 - https://github.com/haris-musa/excel-mcp-server
 - https://github.com/negokaz/excel-mcp-server
 - https://github.com/sbroenne/mcp-server-excel

@@ -19,34 +19,26 @@ Plugin retenu : **QGIS MCP** (Nicolas Karasiak, [nkarasiak/qgis-mcp](https://git
 2. **Serveur MCP** (`qgis-mcp-server`) — traduit MCP vers le socket TCP du plugin. Lancé via `uv`/`uvx` (voir `docs/guides.md` pour l'installation d'`uv`), transport `stdio` par défaut.
 3. **`mcpo`** ([open-webui/mcpo](https://github.com/open-webui/mcpo)) — proxy qui encapsule `qgis-mcp-server` (transport `stdio`) et l'expose en API **OpenAPI** classique. C'est la pièce qui permet la connexion à Open WebUI, **dans tous les cas de déploiement** (poste local comme instance mutualisée) — voir "Pourquoi `mcpo` et pas le MCP natif" ci-dessous.
 
-**Commande de lancement (poste de l'agent)** :
+**Commande de lancement (poste de l'agent)** — packagée dans `start.sh` (même dossier, variable `MCPO_API_KEY_QGIS` à définir, voir `config/.env.example`) :
 ```
 uvx mcpo --port 8001 --api-key "<une-clé-au-choix>" -- uvx --from git+https://github.com/nkarasiak/qgis-mcp qgis-mcp-server
 ```
 
-**Connexion côté Open WebUI** : Admin Settings → External Tools (ou Settings → Tools en "Direct Tool Server" pour un utilisateur non-admin sur une instance mutualisée, cf. plus bas) → **Type : OpenAPI**, **URL : `http://host.docker.internal:8001`** (Open WebUI tourne dans Docker ; `host.docker.internal` désigne le poste hôte) ou `http://localhost:8001` si Open WebUI tourne hors Docker, **Auth : Bearer**, avec la même clé que `--api-key`.
+**Connexion côté Open WebUI** : Admin Settings → External Tools (admin) ou, pour un utilisateur non-admin sur une instance mutualisée (cf. plus bas), **Settings personnels → onglet "Integrations" (FR : "Intégrations") → "Manage Tool Servers" (FR : "Gérer les serveurs d'outils")** — pas l'onglet "Connections"/"Connexions", qui lui sert aux endpoints de modèles (OpenAI-compatible), pas aux serveurs d'outils. → **Type : OpenAPI**, **URL : `http://host.docker.internal:8001`** (Open WebUI tourne dans Docker ; `host.docker.internal` désigne le poste hôte) ou `http://localhost:8001` si Open WebUI tourne hors Docker, **Auth : Bearer**, avec la même clé que `--api-key`.
 
 ## Pourquoi `mcpo` et pas le support MCP natif d'Open WebUI
 
-Deux caractéristiques du support MCP natif d'Open WebUI (documentées sur [docs.openwebui.com/features/extensibility/mcp](https://docs.openwebui.com/features/extensibility/mcp), vérifiées en conditions réelles le 20/07/2026) le rendent inadapté à ce montage :
-
-1. **Admin-only et centralisé** : un serveur MCP ne peut être ajouté que par un administrateur (*Admin Settings → External Tools*), jamais par un utilisateur individuel. Sur une instance mutualisée entre plusieurs chargés d'études, une URL `localhost` configurée une fois par l'admin pointerait vers le poste de l'admin, pas vers celui de chaque agent — inutilisable pour le mode hybride visé (QGIS tourne sur le poste de chaque chargé d'études, pas sur un serveur central).
-   Le mécanisme qui résout ce problème pour un déploiement à plusieurs utilisateurs — **"Direct Tool Servers"**, qui fait bien partir l'appel depuis le navigateur de chacun pour atteindre son propre `localhost` — n'existe que pour les serveurs **OpenAPI**, pas pour MCP. D'où le choix d'exposer `qgis-mcp-server` en OpenAPI (via `mcpo`) plutôt qu'en MCP natif.
-2. **Protection anti-DNS-rebinding, même en local** : `qgis-mcp-server` (via FastMCP, la bibliothèque qu'il utilise) active par défaut une vérification de l'en-tête HTTP `Host` de la requête entrante contre une liste blanche limitée à `localhost`/`127.0.0.1`. Comme Open WebUI tourne dans Docker, il doit appeler `http://host.docker.internal:8000` pour atteindre le poste hôte — un `Host` qui n'est jamais dans cette liste blanche, quel que soit le poste. Résultat observé : `421 Misdirected Request`. Aucune variable d'environnement documentée par `qgis-mcp` ne permet d'élargir cette liste blanche. Ce blocage touche donc **aussi le cas d'un Open WebUI local** (pas seulement l'instance mutualisée).
-
-`mcpo` évite ce deuxième problème par construction : il lance `qgis-mcp-server` lui-même en sous-processus (transport `stdio`, pas de couche HTTP entre les deux), et expose sa propre API OpenAPI (FastAPI, sans cette vérification de `Host`).
+Justification technique valable pour tous les serveurs MCP métier du projet (pas spécifique à QGIS) : voir `docs/architecture/decision-framework.md`, section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`".
 
 ## Prérequis côté Open WebUI
 
-- Version ≥ 0.6.31 pas nécessaire pour ce montage (on utilise OpenAPI, pas le MCP natif) — utile seulement si un autre outil MCP natif est ajouté par ailleurs.
-- Instance mutualisée : activer l'option *"Direct Tool Servers"* (désactivée par défaut) par utilisateur/groupe dans les paramètres admin.
+Paramétrage générique (droits/permissions Open WebUI), pas spécifique à QGIS : voir `docs/guides.md`, section "Paramétrer les droits Open WebUI (instance mutualisée)".
 
-## Checklist avant de proposer l'usage aux chargés d'études (instance mutualisée)
+## Checklist de déploiement — statut pour `mcp-qgis`
 
-1. Vérifier sur l'instance Audiar réelle que l'option *"Direct Tool Servers"* est bien activable et fonctionne pour un compte non-admin — un bug a été signalé sur ce point dans certaines versions d'Open WebUI ([issue #15006](https://github.com/open-webui/open-webui/issues/15006), "permission not working for non-admin users") : à tester avant tout déploiement, pas à supposer fonctionnel.
-2. Packager sur chaque poste le lancement conjoint de : plugin QGIS MCP (démarrage auto à l'ouverture de QGIS) → `mcpo` (qui lance lui-même `qgis-mcp-server`) — idéalement un script unique, pas plusieurs manipulations manuelles par un profil non-développeur.
-3. Vérifier que le navigateur (onglet Open WebUI) peut effectivement atteindre `http://localhost:<port>` de `mcpo` sans blocage CORS/mixed-content (Open WebUI en HTTPS appelant un `localhost` en HTTP peut être bloqué par certains navigateurs — à tester en conditions réelles).
-4. Chaque chargé d'études ajoute lui-même l'URL de son `mcpo` local dans *Settings → Tools* (paramètre personnel, pas partageable entre postes).
+Modèle générique de la checklist, applicable à tout serveur MCP : `docs/guides.md`, section "Checklist de déploiement d'un nouveau serveur MCP (instance mutualisée)".
+
+✅ **Validé le 20/07/2026** — testé sur l'instance locale de Charlotte avec un compte non-admin dédié : connexion `mcpo` ajoutée via *Intégrations → Gérer les serveurs d'outils*, outil réellement invoqué en conversation (le modèle a renvoyé les infos des couches du projet QGIS ouvert). La combinaison des deux réglages admin (toggle global + permission de groupe) fonctionne comme attendu. Note : l'[issue #15006](https://github.com/open-webui/open-webui/issues/15006) initialement citée ici comme "bug signalé" a été retirée par son auteur (fausse alerte, confusion avec les connexions directes aux modèles) — cohérent avec ce test qui n'a rencontré aucun blocage. Confirmé également : la section *Intégrations → Gérer les serveurs d'outils* est bien visible (non grisée) pour un compte non-admin une fois la permission "Serveur d'outils directs" activée pour son groupe — pas de blocage constaté à ce stade. Reste à vérifier : ce test s'est fait sur un seul poste (même machine que l'admin) ; le scénario multi-poste réel (chaque agent avec son propre `mcpo` local) n'a pas encore été testé.
 
 ## Points de vigilance avant déploiement
 

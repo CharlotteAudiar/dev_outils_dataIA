@@ -1,14 +1,13 @@
 # Audiar IA Toolkit
 
-Outil IA associant un framework d'orchestration et des serveurs MCP métier (QGIS, filesystem, PostgreSQL) pour les chargés d'études de l'agence.
+Outil IA associant **Open WebUI** (framework retenu, cf. `docs/architecture/decision-framework.md`) et des serveurs MCP métier (QGIS, filesystem, PostgreSQL) pour les chargés d'études de l'agence.
 
 ## Contenu
 
-- `framework/` — cœur applicatif
-- `servers/` — serveurs MCP (`mcp-qgis`, `mcp-filesystem`, `mcp-postgres`)
-- `config/` — configuration des serveurs et gabarits clients (Claude Desktop/Cowork, Cursor)
-- `docs/` — documentation technique (`architecture/`) et fonctionnelle (`specs/`, `guides/`, `knowledge/`)
-- `scripts/` — installation, déploiement, migrations
+- `servers/` — serveurs MCP (`mcp-qgis`, `mcp-filesystem`, `mcp-postgres`), chacun avec son `README.md` + `start.sh`
+- `config/` — `.env.example` (variables d'environnement attendues)
+- `scripts/` — scripts transverses (ex. `start-openwebui.sh`)
+- `docs/` — documentation technique (`architecture/`, `sources/`) et fonctionnelle (`specs.md`, `guides.md`, `knowledge.md`)
 
 ## Démarrage
 
