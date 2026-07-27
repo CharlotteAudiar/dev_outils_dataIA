@@ -483,8 +483,7 @@ Données en entrée
 Métadonnées BDSIG et serveur K ; documentation interne
 Résultat attendu
 Questions et réponses en langage naturel : "Dernière donnée disponible sur le logement social ?", "Attributs de la table emploi ?"
-Outils envisagés
-Open WebUI + RAG
+
 Complexité de mise en œuvre
 Élevée — catalogue de métadonnées structuré à construire en prérequis ; déploiement RAG
 Complexité d'utilisation
@@ -513,8 +512,7 @@ Données en entrée
 Tables BDSIG (PostgreSQL/PostGIS) ; fichiers lourds
 Résultat attendu
 Extraction ciblée en langage naturel >>> CSV/Excel exploitable
-Outils envisagés
-Open WebUI + MCP BD ; Claude Desktop + MCP BD ; VS Code + Cline
+
 Complexité de mise en œuvre
 Moyenne-élevée — technologie text-to-SQL mature, adaptation au schéma Audiar et sécurisation des accès à faire
 Complexité d'utilisation
@@ -543,8 +541,7 @@ Données en entrée
 Fichiers Excel, CSV issus d'extractions
 Résultat attendu
 Formules générées, TCD créés, jointures réalisées, mises en forme appliquées
-Outils envisagés
-Extension application (Copilot Excel, extension Claude Excel) ; Claude Desktop ; Open WebUI ; VS Code + Cline
+
 Complexité de mise en œuvre
 Faible — outils déjà disponibles
 Complexité d'utilisation
@@ -554,7 +551,7 @@ Impact
 Risques
 Erreurs dans les formules générées ; perte de maîtrise si l'utilisateur ne comprend pas le traitement produit
 Contraintes
-Contrôle pas à pas à favoriser >>> extension application ou Claude Desktop préférables à Open WebUI ; données sensibles >>> solution souveraine (OVH Cloud, RAGaRenn)
+Contrôle pas à pas à favoriser 
 Prérequis
 Formation minimale à la vérification des résultats
  
@@ -573,8 +570,7 @@ Données en entrée
 PDF structurés ou non ; pages web ; tables avec champs textuels à catégoriser ; listes d'adresses
 Résultat attendu
 Table structurée issue de PDF ; table enrichie depuis le web ; colonne de classification générée ; descriptions automatiques ; adresses géocodées
-Outils envisagés
-Claude Desktop ; Open WebUI ; VS Code + Cline ; + RAG documentation
+
 Complexité de mise en œuvre
 Faible (extraction PDF, classifications simples) à élevée (enrichissement sémantique : base vectorielle à déployer)
 Complexité d'utilisation
@@ -605,8 +601,7 @@ Données en entrée
 Projets QGIS ; couches géo ; tables attributaires
 Résultat attendu
 Cartes thématiques produites/mises à jour ; opérations géomatiques réalisées (jointures spatiales, tampons, fusions) ; symbologie et charte graphique appliquées
-Outils envisagés
-MCP QGIS (Claude Desktop ; Open WebUI ; VS Code + Cline) ; prompt system/skills (Claude Desktop ; VS Code + Cline ; Open WebUI)
+
 Complexité de mise en œuvre
 Moyenne — MCP QGIS encore expérimental, à stabiliser ; génération de scripts Python plus mature
 Complexité d'utilisation
@@ -635,8 +630,7 @@ Données en entrée
 Tables Excel/CSV de résultats ; exports TCD ; données géo avec attributs statistiques ; séries temporelles
 Résultat attendu
 Description statistique (distributions, valeurs remarquables) ; tendances et anomalies identifiées ; hypothèses formulées ; comparaisons territoriales...
-Outils envisagés
-Claude Desktop ; Open WebUI ; VS Code + Cline
+
 Complexité de mise en œuvre
 Faible à moyenne — outils disponibles ; paramétrage du contexte (données, méthodo) à soigner
 Complexité d'utilisation
@@ -675,14 +669,13 @@ Données en entrée
 Fichiers Excel, CSV consolidés ; exports BDSIG
 Résultat attendu
 TCD + graphiques dynamiques ; mise en forme conditionnelle ; intégration multi-fichiers CSV
-Outils envisagés
-Extension application (Copilot Excel) ; Claude Desktop ; Open WebUI
+
 Complexité de mise en œuvre
 Faible — outils disponibles
 Complexité d'utilisation
 Faible à moyenne
 Contraintes
-Données sensibles >>> extension application (données dans le tenant Microsoft 365) ou Claude Desktop (local)
+
 Prérequis
 Fichiers de données stables en structure
  
@@ -695,8 +688,7 @@ Données en entrée
 Tables CSV ou JSON ; données BDSIG exportées ; données API
 Résultat attendu
 Page HTML interactive (graphiques, filtres, tableaux) consultable en interne
-Outils envisagés
-VS Code + Cline ; Claude Desktop ; Open WebUI
+
 Complexité de mise en œuvre
 Moyenne — itérations et débogage nécessitent un minimum de lecture de code
 Complexité d'utilisation
@@ -715,8 +707,7 @@ Données en entrée
 Tables BDSIG ; fichiers Excel/CSV ; données API
 Résultat attendu
 Rapport Power BI publié en interne ; indicateurs mis à jour automatiquement
-Outils envisagés
-Extension application (Copilot Power BI) ; outil IA (Claude desktop, VS Code + cline) + MCP
+
 Complexité de mise en œuvre
 Élevée — connexion aux sources, modélisation, publication à configurer
 Complexité d'utilisation
@@ -737,8 +728,7 @@ Données en entrée
 Couches géo ; tables attributaires de suivi
 Résultat attendu
 Projet QGIS de suivi mis à jour ; carte de synthèse exportée ; carte web interactive
-Outils envisagés
-MCP QGIS + (Claude Desktop ; VS Code + Cline ; Open WebUI)
+
 Complexité de mise en œuvre
 Moyenne — MCP QGIS expérimental ; carte web plus complexe
 Complexité d'utilisation
@@ -763,8 +753,7 @@ Données en entrée
 Nouveaux millésimes de données ; projets QGIS et fichiers Excel version précédente ; paramètres du nouveau périmètre
 Résultat attendu
 Chaîne réexécutée avec nouvelles données ; cartes et graphiques mis à jour ; livrables régénérés ; ou étude reproduite sur nouveau territoire
-Outils envisagés
-VS Code + Cline ; Claude Desktop ; outils types Cowork open source
+
 Complexité de mise en œuvre
 Moyenne-élevée — dépend du degré de formalisation de la chaîne existante ; chaîne non documentée = point de départ difficile
 Complexité d'utilisation
@@ -795,8 +784,7 @@ Données en entrée
 Documents de méthodologie (PDF, notes internes, guides nationaux) ; données sources à identifier ; projets QGIS/Excel existants
 Résultat attendu
 Données en entrée identifiées ; chaîne conçue étape par étape ; outils paramétrés ; traitements exécutés ; premiers résultats et livrables produits
-Outils envisagés
-VS Code + Cline ; Claude Desktop ; outils types Cowork open source
+
 Complexité de mise en œuvre
 Élevée — infrastructure mode projet à définir et stabiliser ; stack technique à choisir
 Complexité d'utilisation

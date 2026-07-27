@@ -5,6 +5,7 @@ old/
 
 # Variables d'environnement
 .env
+servers/mcp-dbhub/dbhub.toml
 
 # Environnement virtuel
 .venv/

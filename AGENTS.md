@@ -5,7 +5,7 @@ Lu nativement par Cursor. `CLAUDE.md` importe ce fichier pour Claude Code.
 
 ## Stack
 
-- Framework d'orchestration : **Open WebUI** (instance "Open WebUI Audiar" — décision et justification dans `docs/architecture/decision-framework.md`)
+- Framework d'orchestration : **Open WebUI** (instance "Open WebUI Audiar" — décision et justification dans `docs/architecture/decisions.md`)
 - Serveurs MCP métier : QGIS, filesystem, PostgreSQL, Excel (voir `servers/`), exposés à Open WebUI via le proxy `mcpo` (MCP → OpenAPI)
 - Langage(s) : à définir
 
@@ -29,7 +29,12 @@ Lu nativement par Cursor. `CLAUDE.md` importe ce fichier pour Claude Code.
 
 ## Commandes
 
-_À compléter au fur et à mesure (install, lint, tests, run)._
+- Lancer Open WebUI (déjà installé) : `./scripts/start-openwebui.sh` (installation initiale : `docs/guides.md`)
+- Lancer mcp-qgis : `./servers/mcp-qgis/start.sh` (requiert `MCPO_API_KEY_QGIS` dans `.env` racine + plugin QGIS MCP démarré côté QGIS Desktop)
+- Lancer mcp-postgres : `./servers/mcp-postgres/start.sh` (requiert `DATABASE_URI` et `MCPO_API_KEY_POSTGRES` dans `.env` racine)
+- Lancer mcp-dbhub (**phase 1, en comparaison avec mcp-postgres — pas encore tranché**, voir `servers/mcp-dbhub/README.md` et `docs/architecture/decisions.md`) : `./servers/mcp-dbhub/start.ps1` (requiert `DATABASE_URI`, `MCPO_API_KEY_DBHUB` dans `.env` racine, et `dbhub.toml` copié depuis `dbhub.toml.example`, même dossier)
+- Logs Open WebUI : `docker logs open-webui` (`-f` pour suivre en direct, `--tail 100` pour les 100 dernières lignes)
+- Pas de lint/tests à ce stade : le repo assemble des outils existants (Open WebUI, serveurs MCP tiers) — aucun code applicatif propre au projet pour l'instant.
 
 ## Note de style pour ce fichier
 

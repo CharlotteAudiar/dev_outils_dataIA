@@ -25,7 +25,7 @@ Les cas 8 et 9 (actualisation/reproduction d'une chaîne de traitement et concep
 
 Le développement se concentrera d'abord sur les cas d'usage 1 (connaissance des données Audiar / catalogue), 2 (extraction depuis une table en base), 3 (manipulation Excel assistée) et 5 (géomatique/QGIS) de l'analyse fonctionnelle. 
 
-Toutefois, le prototype développé permettra si possible de fonctionner en mode projet, avec un accès à un dossier de travail complet.
+Toutefois, le prototype développé pourra si possible de fonctionner en mode projet, avec un accès à un dossier de travail complet.
 
 
 ## Solutions d'orchestration
@@ -91,12 +91,23 @@ Les frameworks regroupent des briques pouvant être utilisées pour construire s
 
 Recensement des implémentations existantes évaluées pour chaque serveur MCP.
 
+Liens utiles :  
+
+- doc MCP, LF Projects (The Linux Foundation projects) https://modelcontextprotocol.io/docs/getting-started/intro
+- liste de MCP, glama.ai, https://glama.ai/mcp/servers
+- liste de MCP, pulsemcp.com, https://www.pulsemcp.com/servers 
+- liste de MCP, mcp.so, https://mcp.so
+- liste de MCP, https://mcpservers.org 
+
 ### mcp-qgis
 #### Tableau comparatif
 | Candidat | Repo | Notes | Pérennité |
 |---|---|---|---|
 | jjsantos01/qgis_mcp | https://github.com/jjsantos01/qgis_mcp | Implémentation d'origine. Plugin QGIS (socket server) + serveur MCP Python en face. Référencé dans le plugin officiel QGIS ([plugins.qgis.org](https://plugins.qgis.org/plugins/qgis_mcp_plugin/)). | 949 ★, 151 forks, 13 commits, **aucune release taguée**. |
 | **nkarasiak/qgis-mcp** — **candidat retenu (20/07/2026)** | https://github.com/nkarasiak/qgis-mcp | Fork/variante avec capacités étendues (100+ outils MCP vs ~15 pour l'original). | Rythme de publication soutenu malgré moins d'étoiles que l'original (chiffres à revérifier depuis le relevé du 17/07/2026). |
+| nic01asFr/QgisStreamMCP — **repéré le 24/07/2026, non arbitré** | https://github.com/nic01asFr/QgisStreamMCP | Approche différente des deux précédents : QGIS Desktop complet tourne dans un conteneur Docker (GUI accessible via noVNC), pas un plugin sur le poste. Point notable pour Audiar : catalogue intégré de 30+ jeux de données français en open data (BD TOPO, Admin Express, RPG, cadastre IGN, Corine Land Cover...) via un pipeline "smart_load" qui télécharge et indexe automatiquement (bien plus robuste qu'une connexion WFS live selon le projet). Ajoute aussi des "recettes" de workflows préconstruits (densité bâtie, risque inondation...) et des exports QField/Grist. À vérifier avant tout usage : fiabilité des outils structurés (point de vigilance déjà noté pour qgis-mcp en général), et cohérence avec le choix déjà fait d'un accès par poste plutôt que centralisé (`decisions.md`). | **Très jeune et non éprouvé** : 6 ★, 1 fork, **un seul commit** au dépôt, aucune release taguée — à surveiller mais pas encore comparable en maturité aux deux candidats ci-dessus. |
+
+*Autres forks repérés le 24/07/2026 et écartés faute de traction ou de périmètre pertinent : anitagraser/QGIS2OllamaMCP (fork de jjsantos01, orienté Ollama, 7 ★, n'apporte pas de capacités supplémentaires notables) ; dkudom/QGIS-MCP-Server (projet ad hoc pour une collectivité au Ghana, 0 ★) ; kicker315/deepseek_qgis_mcp et syauqi-uqi/qgis_mcp_modify1 (forks personnels sans indicateur de traction).*
 
 ### mcp-filesystem
 #### Tableau comparatif
@@ -109,9 +120,32 @@ Recensement des implémentations existantes évaluées pour chaque serveur MCP.
 #### Tableau comparatif
 | Candidat | Repo | Notes | Pérennité |
 |---|---|---|---|
-| crystaldba/postgres-mcp | https://github.com/crystaldba/postgres-mcp | "Postgres MCP Pro", activement maintenu. Accès lecture/écriture configurable + analyse de performance. Candidat recommandé. | ~2,4k ★ (source variable selon le moment de mesure), 259 forks — activité soutenue. |
+| crystaldba/postgres-mcp — **retiré du statut "recommandé" le 25/07/2026, voir alerte ci-dessous** | https://github.com/crystaldba/postgres-mcp | "Postgres MCP Pro". Accès lecture/écriture configurable + analyse de performance (le vrai différenciateur : tuning d'index, plans `EXPLAIN`, bilans de santé) — toujours les fonctions de tuning les plus abouties du tableau. | ~2,4k ★ (source variable selon le moment de mesure), 259 forks — activité soutenue en apparence, largement contredite par l'alerte ci-dessous. |
 | modelcontextprotocol/servers-archived (src/postgres) | https://github.com/modelcontextprotocol/servers-archived/tree/main/src/postgres | Ancienne implémentation de référence Anthropic, **archivée depuis le 29/05/2025, non maintenue**. Une faille d'injection SQL contournant la restriction lecture seule y a été documentée (Datadog Security Labs) — à éviter en production. | 260 ★, 147 forks (dépôt archivé entier), **0 release, dépôt en lecture seule**. |
 | googleapis/mcp-toolbox (ex-`genai-toolbox`) — **repéré le 21/07/2026, non arbitré face au candidat retenu** | https://github.com/googleapis/mcp-toolbox | Pas un serveur dédié Postgres : framework générique multi-bases (Postgres, MySQL, BigQuery, Spanner, SQLite...), maintenu officiellement par Google. Utilisable avec un Postgres auto-hébergé générique, pas seulement Cloud SQL/AlloyDB — pas de verrouillage Google Cloud. Deux modes : "prebuilt" (`--prebuilt=postgres`, proche d'un accès SQL direct) ou configuration par fichier `tools.yaml` définissant des requêtes SQL paramétrées et figées à l'avance — approche plus contrainte/auditable que le SQL libre, cohérente avec la logique déjà retenue (mode `restricted` + rôle dédié en lecture seule). Outils de santé/perf riches (activité, locks, index, stats de requêtes, autovacuum, réplication...), comparables à postgres-mcp Pro ; pas d'équivalent identifié à l'`EXPLAIN`/recommandation d'index automatique. Pas de mode read-only natif au niveau protocole — même recommandation de défense en profondeur par rôle Postgres. Windows compatible (binaire natif ou `npx`), transport stdio/HTTP. | ~16 000 ★, ~1 600 forks, v1.0 stable depuis le 10/04/2026, rythme de release toutes les 2-3 semaines (jusqu'à v1.7 au 16/07/2026) — activité et pérennité fortes (Google, Apache 2.0). |
+| pgplex/pgconsole — **repéré le 24/07/2026, à piloter en parallèle** | https://github.com/pgplex/pgconsole | Angle différent de tous les candidats ci-dessus : ce n'est pas d'abord un serveur MCP mais une console SQL web self-hosted qui expose *en plus* un point d'accès MCP, avec le même modèle de droits pour un humain cliquant dans l'interface et pour un agent IA. L'agent ne voit jamais la chaîne de connexion : il obtient une identité propre (principal dédié), peut agir "pour le compte" d'un utilisateur en mode délégué (droits plafonnés à ceux de cet utilisateur, jamais au-dessus, perdus si l'utilisateur perd les siens), avec 7 droits fins (lecture, écriture, DDL, admin...) refusés par défaut sauf règle explicite, et un parseur SQL qui bloque les requêtes destructrices avant exécution (pas juste un flag "read-only" côté connexion, contournable comme chez l'ancien serveur Anthropic ci-dessus). Configuration versionnable façon GitOps (`pgconsole.toml`), binaire unique (npx ou Docker), pas de base séparée à administrer. Pertinent pour Audiar car directement structuré autour du besoin déjà identifié (accès lecture seule pour Charlotte sur BDSIG, traçabilité) plutôt que rajouté après coup. | Jeune : ~120 ★, Apache 2.0, premières releases récentes — pas encore le recul des autres candidats, mais modèle de gouvernance le plus abouti du tableau selon Bytebase (comparatif indépendant, source ci-dessous). |
+| **bytebase/dbhub — candidat recommandé (25/07/2026)** | https://github.com/bytebase/dbhub | Comme googleapis/mcp-toolbox, pas un serveur dédié Postgres mais multi-bases (Postgres, MySQL, MariaDB, SQL Server, SQLite) via une interface unique ; maintenu par Bytebase (éditeur d'une plateforme de gouvernance de bases de données, société établie). Se présente comme "zero-dependency, token-efficient" : seulement deux outils MCP principaux (`execute_sql`, `search_objects` avec divulgation progressive du schéma) plutôt qu'une longue liste d'outils, pour limiter la consommation de contexte. Garde-fous intégrés : mode lecture seule, limite de lignes, timeout de requête, tunnel SSH et TLS. Inclut aussi un "Workbench" web pour tester les requêtes/outils sans passer par un client MCP. | ~2,9k ★, 242 forks, 513 commits, développement très actif, TypeScript, MIT. |
+
+**Alerte sur l'ancien candidat recommandé (crystaldba/postgres-mcp)** : selon un comparatif indépendant de Bytebase (30/06/2026, source ci-dessous), la société Crystal DBA a été rachetée par Temporal en septembre 2025 et le développement du serveur s'est **essentiellement arrêté depuis** — dernière release taguée (v0.3.0) en mai 2025, derniers commits significatifs jusqu'en janvier 2026 puis silence, 63 issues ouvertes dont une fuite de connexions en mode SSE non résolue, et du travail déjà mergé (transport streamable-HTTP) jamais publié en release ni dans l'image Docker. Point plus immédiat : **le mode par défaut est `unrestricted` (lecture/écriture complète, SQL arbitraire)** — tous les exemples du README utilisent ce mode par défaut, il faut explicitement passer `--access-mode=restricted` pour retrouver la restriction lecture seule déjà actée pour Audiar. Ses fonctions de tuning restent les plus abouties du tableau, mais l'état de maintenance ne permet plus de le recommander en l'état.
+
+**Arbitrage proposé (25/07/2026)** : `bytebase/dbhub` remplace `crystaldba/postgres-mcp` comme candidat recommandé — maintenance active (contrairement à crystaldba), garde-fous simples et réellement opérants (lecture seule, limite de lignes, timeout), et flexibilité pour du SQL ad hoc adaptée au cas d'usage 2 (extraction depuis une table en base), sans le formalisme de requêtes prédéfinies de `googleapis/mcp-toolbox`. `pgplex/pgconsole` reste à surveiller en parallèle : c'est le seul candidat dont le modèle de droits (identité par agent, délégation "pour le compte de", plafonnée aux droits de l'utilisateur) correspond precisément au besoin de traçabilité par utilisateur déjà identifié pour Audiar — mais sa jeunesse (120 ★, premières releases) ne permet pas encore de le retenir seul. Cet arbitrage reste à confirmer par l'Audiar, pas encore testé en conditions réelles.
+
+**Point de vigilance ajouté après retour de Charlotte (24/07/2026) : dépendance runtime par candidat.** Absent du tableau jusqu'ici, alors que c'est un paramètre de choix et pas un simple détail d'installation — en particulier tant que le poste d'exécution réel (poste de Charlotte aujourd'hui pour le test, futur serveur Merlin demain) n'est pas figé :
+
+- `crystaldba/postgres-mcp` : Python, lancé via `uv`/`uvx` — déjà la brique retenue pour `qgis-mcp` (voir `docs/architecture/decisions.md`, section "pourquoi `uv`/`uvx`"). Aucune dépendance supplémentaire.
+- `bytebase/dbhub` : nécessite Node.js ≥ 22.5 pour l'installation `npm`/`npx` — **dépendance nouvelle pour ce projet**, absente du poste de Charlotte (constaté le 24/07/2026 en testant). Alternative : image Docker officielle, qui réutilise Docker Desktop déjà installé pour Open WebUI (donc pas de nouvelle dépendance dans ce cas), mais rompt avec le pattern de lancement des autres serveurs MCP du projet (processus `uvx` direct sur l'hôte plutôt qu'un conteneur) — voir `servers/mcp-dbhub/README.md`.
+- `googleapis/mcp-toolbox` : "binaire natif ou npx" (déjà noté dans le tableau ci-dessus) — même dépendance potentielle à Node.js si la voie `npx` est retenue ; à vérifier si le binaire natif Windows est réellement autonome.
+- `pgplex/pgconsole` : "npx ou Docker" (déjà noté) — même alternative que `dbhub`.
+
+**Inconnu à ce stade, à vérifier avant de trancher** : l'environnement réel du futur serveur Merlin (Docker et/ou Node.js déjà disponibles ?). Le choix Docker fait pour le test `dbhub` en cours (`servers/mcp-dbhub/`) est motivé par ce qui est disponible aujourd'hui sur le poste de Charlotte, pas par une préférence tranchée pour tout déploiement futur.
+
+**Mise à jour (24/07/2026)** : la comparaison `dbhub` vs `crystaldba` se fait désormais en phase 1 du déploiement (poste individuel, identifiants personnels), pas en centralisé — voir `docs/architecture/decisions.md`, section "Modèle de déploiement de mcp-postgres : plan en 3 phases". `dbhub` y tourne en transport `stdio` + `mcpo` (pas son mode HTTP natif, qui n'offre pas de chemin de connexion "Direct" personnel côté Open WebUI).
+
+Sources :  
+- comparatif indépendant des MCP Postgres, Bytebase (30/06/2026), https://www.bytebase.com/blog/top-open-source-postgres-mcp-servers/
+- https://github.com/bytebase/dbhub
+- https://github.com/pgplex/pgconsole
+
 
 ### mcp-excel
 
@@ -140,7 +174,38 @@ Cependant, la fiabilité de l'automatisation COM en usage réel est à tester (l
 
 `haris-musa` garde un intérêt comme repli plus simple et sans dépendance.
 
-## Autres outils
+
+### mcp-dataviz
+
+Recherche effectuée le 24/07/2026.
+
+**Précision sur "create-viz" (25/07/2026)** : ce n'est pas un serveur MCP mais un **"agent skill"** officiel Anthropic (dépôt [anthropics/knowledge-work-plugins](https://github.com/anthropics/knowledge-work-plugins/tree/HEAD/data/skills/create-viz), référencé sur [mcpservers.org](https://mcpservers.org/agent-skills/anthropic/create-viz)) — d'où l'absence de résultat lors de la recherche initiale, limitée aux dépôts MCP. La nature est fondamentalement différente des candidats du tableau ci-dessous :
+- pas de serveur à déployer ni d'outils exposés via le protocole MCP : le skill fournit un prompt structuré qui pousse Claude à **écrire et exécuter lui-même du code Python** (matplotlib/seaborn par défaut pour du statique "qualité publication" ; plotly si l'interactivité est demandée), à partir de données déjà disponibles dans la conversation (résultat de requête, DataFrame, fichier collé/importé).
+- sortie : fichier PNG enregistré localement (pas d'appel à un service cloud tiers, contrairement au comportement par défaut d'antvis/mcp-server-chart) — point favorable pour la contrainte de souveraineté déjà actée pour Audiar, à condition que Claude ait accès à un environnement Python avec ces bibliothèques (déjà le cas dans ce mode de travail).
+- inclut des règles de bonnes pratiques de dataviz (guide de choix du type de graphique selon la relation dans les données, palette daltonien-compatible, titres qui énoncent l'insight plutôt que la métrique, axes des ordonnées commençant à zéro pour les barres...) — une couche que les MCP du tableau ci-dessous n'offrent pas nativement, chacun se contentant de générer le graphique demandé.
+
+Cette approche par skill est cohérente avec l'architecture déjà envisagée pour ce prototype (skills docx/xlsx/pptx déjà utilisés dans ce même mode de travail, cf. `decisions.md`) et pourrait être préférée à un MCP dédié si l'environnement d'exécution dispose déjà de Python — à recouper avec le choix de framework final (Open WebUI ne fait pas tourner de code Python arbitraire nativement, contrairement à ce mode de travail).
+
+#### Tableau comparatif (serveurs MCP)
+
+| Candidat | Repo | Capacité | Pérennité | Commentaire utile |
+|---|---|---|---|---|
+| **antvis/mcp-server-chart** | https://github.com/antvis/mcp-server-chart | 26+ types de graphiques/diagrammes (barres, lignes, aires, camembert, boxplot, histogramme, radar, sankey, treemap, réseau, mindmap, organigramme, fishbone, logigramme, nuage de mots, venn, violon, entonnoir, dual-axes...) + tableau croisé/pivot ; outils de cartographie géographique séparés mais **limités à la Chine** (service AMap, non pertinents pour Audiar). | 4,1k ★, 389 forks, 111 commits, MIT, maintenu par AntV (équipe visualisation d'Ant Group), 24 releases, dernière 0.9.10 (25/02/2026) — le plus starré et le plus mature du tableau. | Candidat le plus solide à date. Point de vigilance : par défaut, chaque image générée est rendue par un service cloud Alipay (`antv-studio.alipay.com`) — configurer la variable `VIS_REQUEST_SERVER` vers un déploiement privé (le projet fournit `GPT-Vis-SSR` pour ça) est nécessaire pour respecter la contrainte de souveraineté des données déjà actée pour Audiar. Windows compatible (`npx` ou Docker). Propose aussi un "skill" Claude Code dédié (sélection automatique du type de graphique). |
+| **mckinsey/vizro** (sous-dossier `vizro-mcp`) | https://github.com/mckinsey/vizro | Portée différente et plus large : construit des tableaux de bord **Vizro** complets (multi-pages, filtres, cartes KPI, navigation) sur la base de Plotly/Dash, pas seulement des images de graphiques isolées — pertinent si l'objectif rejoint le cas d'usage 7 (construction d'un tableau de bord) déjà identifié plus haut dans ce document plutôt qu'un simple graphique ponctuel dans une conversation. | 3,7k ★ (dépôt monorepo entier), 284 forks, 1 244 commits, Apache 2.0, maintenu par McKinsey, très actif (92 releases, dernière juin 2026). | À classer à part : ce n'est pas un générateur d'images de graphiques mais un outil de construction d'application de dashboard (sortie = app Python Dash à déployer, pas une image intégrée au chat). Le projet indique lui-même que Vizro-AI (approche précédente, génération de dashboard par LLM) est abandonné au profit de Vizro-MCP — bon signe de continuité, mais aussi le signe d'un outil encore jeune dans cette forme. |
+| **VisActor/vchart-mcp-server** | https://github.com/VisActor/vchart-mcp-server | Graphiques interactifs via `@visactor/vchart` (bibliothèque backée par ByteDance) — principe proche d'antvis/mcp-server-chart mais écosystème distinct. | 52 ★, 5 forks, MIT, TypeScript, actif (créé juillet 2025, dernier push mars 2026). | Nettement moins mature/adopté qu'antvis/mcp-server-chart ; à garder en solution de secours si ce dernier posait un problème bloquant (ex. dépendance au service cloud), non testé par ailleurs. |
+| **isaacwasserman/mcp-vegalite-server** | https://github.com/isaacwasserman/mcp-vegalite-server | Génère des visualisations via la grammaire déclarative **Vega-Lite** (spécification ouverte, contrôle fin des graphiques), retourne une image PNG encodée en base64. | 101 ★, 28 forks, Python, **aucune licence déclarée** dans le dépôt (point de vigilance juridique avant tout usage), dernier commit mai 2025 — développement apparemment à l'arrêt depuis plus d'un an. | Intéressant pour la rigueur de la grammaire Vega-Lite (portable, non liée à un service tiers) mais projet visiblement à l'arrêt et sans licence explicite — à écarter en l'état sauf signe de réactivation. |
+| **GongRzhe/Quickchart-MCP-Server** — **archivé, à écarter** | https://github.com/GongRzhe/Quickchart-MCP-Server | Graphiques simples via l'API QuickChart.io (barres, lignes, camemberts, radar...). | 159 ★, 44 forks, MIT, dernier push mai 2025, **dépôt explicitement marqué "archived" par son auteur**. | Traction correcte mais développement arrêté officiellement. Repose de toute façon sur le service tiers QuickChart.io (pas de rendu local) — aurait posé la même question de souveraineté qu'AntV, sans le niveau d'adoption. |
+
+*Autres candidats repérés le 24/07/2026 et écartés faute de traction : SCKelemen/dataviz (2 ★, très récent, licence non standard "Other") ; TakanariShimbo/quickchart-mcp-server (2 ★, 0 fork) ; a-humphrey/plotly_mcp (1 ★, projet expérimental personnel). antvis/mcp-server-antv a aussi été écarté du tableau : ce n'est pas un générateur de graphiques mais un outil d'aide au développement (documentation contextuelle pour qui code avec les bibliothèques AntV), hors périmètre.*
+
+Sources :  
+- dépôts GitHub cités ci-dessus (README + métadonnées via l'API GitHub, relevé du 24/07/2026)
+
+
+## Autres outils (Open WebUI)
+
+Liens utiles : 
+- Open WebUI, https://openwebui.com/search?query=web+search&sort=top&t=all&page=1 
 
 ### Moteurs de recherche web
 
@@ -163,6 +228,31 @@ Recherche comparative pour la fonctionnalité de recherche web native d'Open Web
 
 
 **Candidat identifié mais non évalué** : **Linkup**, cité dans une comparaison tierce comme le provider "le plus précis" du marché — à creuser si Brave/SearXNG/Tavily s'avéraient insuffisants à l'usage.
+
+
+### Dataviz
+
+Alternative aux serveurs MCP recensés plus haut (`mcp-dataviz`) : produire des graphiques directement via les fonctionnalités natives d'Open WebUI, en s'appuyant sur la capacité du modèle à écrire du code Python/JS plutôt que sur un outil de génération de graphiques préconstruit. Trois leviers natifs, non exclusifs entre eux.
+
+#### Tableau comparatif
+
+| Levier | Fonctionnement | Bibliothèques / capacités | Accès réseau | Infra à héberger | Avantages | Limites / vigilance |
+|---|---|---|---|---|---|---|
+| **Code Interpreter — mode Pyodide** | Python exécuté côté navigateur (WebAssembly) ; le modèle écrit le code, l'exécute, l'image du graphique s'affiche directement dans la conversation. | numpy, pandas, matplotlib, seaborn (+ scikit-learn, scipy, sympy pour l'analyse en amont). | Aucun — bac à sable isolé du réseau. | Aucune — natif, déjà inclus dans Open WebUI. | Zéro service supplémentaire à maintenir ; 100% local (tourne dans le navigateur de l'utilisateur) ; proche dans l'esprit du skill Claude `create-viz` documenté plus haut (le modèle écrit lui-même le code avec de bonnes pratiques), mais nativement intégré plutôt que packagé en skill. | Les données doivent déjà être présentes dans la conversation (collées, importées, ou renvoyées par un appel d'outil/Tool précédent) avant de pouvoir être tracées — ne permet pas seul d'interroger Postgres ou un fichier distant. |
+| **Code Interpreter — mode Jupyter** | Depuis la v0.5.11, Open WebUI peut déléguer l'exécution à un serveur Jupyter externe plutôt qu'à Pyodide. | Mêmes bibliothèques Python que Pyodide, sans la limite du bac à sable. | Oui — le code exécuté peut atteindre le réseau, donc potentiellement une connexion directe à Postgres (ou autre source) depuis le code généré, sans passer par un Tool intermédiaire. | Un serveur Jupyter à déployer et maintenir (composant Docker supplémentaire). | Lève la limite d'accès réseau de Pyodide. | Composant de plus à administrer ; questions d'isolation/droits d'accès réseau à cadrer — pas de mode "restreint" documenté équivalent à ce qui a été retenu pour `mcp-postgres`. |
+| **Artifacts** | Le modèle génère une page HTML/JS/CSS autonome, rendue dans un iframe sandboxé directement dans le chat (CSP configurable via `IFRAME_CSP`). | Chart.js, D3.js, Three.js, SVG. | Non pertinent — rendu client, pas d'exécution Python côté serveur. | Aucune — natif. | Interactivité (survol, zoom, filtres) — plus proche d'un tableau de bord léger que d'un graphique statique ponctuel. | Demande que le modèle maîtrise la bibliothèque JS choisie ; pas de garde-fous de bonnes pratiques packagés, contrairement à un skill dédié type `create-viz`. |
+
+#### Commentaires
+
+**Montage envisageable pour Audiar**  
+Combiner un Tool Python natif (pas MCP — cf. section précédente sur la distinction Tools/Skills) qui va chercher les données dans Postgres/Excel et les renvoie dans la conversation, puis Code Interpreter (Pyodide suffit si les données sont déjà récupérées) ou un Artifact pour la mise en forme visuelle. Avantages par rapport aux MCP dédiés du tableau `mcp-dataviz` : pas de dépendance à un service cloud tiers pour le rendu (point de vigilance relevé notamment pour `antvis/mcp-server-chart`, qui rend par défaut via un service Alipay) — cohérent avec la contrainte de souveraineté déjà actée pour Audiar. Pyodide tournant côté navigateur, ça reste local même sans toucher au serveur Docker.
+
+**Non arbitré à ce stade** — reste à tester en conditions réelles (fiabilité du code généré par le modèle sans les garde-fous de bonnes pratiques qu'apporte un skill dédié type `create-viz`, richesse réelle par rapport aux 26+ types de graphiques tout faits d'`antvis/mcp-server-chart`).
+
+Sources :  
+- [Python Code Execution — Open WebUI](https://docs.openwebui.com/features/chat-conversations/chat-features/code-execution/python/)
+- [Jupyter Notebooks — Open WebUI](https://docs.openwebui.com/tutorials/integrations/dev-tools/jupyter/)
+- [Artifacts — Open WebUI](https://docs.openwebui.com/features/chat-conversations/chat-features/code-execution/artifacts/)
 
 
 ## Sources
@@ -219,6 +309,13 @@ Recherche comparative pour la fonctionnalité de recherche web native d'Open Web
 - https://github.com/haris-musa/excel-mcp-server
 - https://github.com/negokaz/excel-mcp-server
 - https://github.com/sbroenne/mcp-server-excel
+- https://github.com/antvis/mcp-server-chart
+- https://github.com/mckinsey/vizro
+- https://github.com/VisActor/vchart-mcp-server
+- https://github.com/isaacwasserman/mcp-vegalite-server
+- https://github.com/GongRzhe/Quickchart-MCP-Server
+- https://mcpservers.org/agent-skills/anthropic/create-viz
+- https://github.com/anthropics/knowledge-work-plugins/tree/HEAD/data/skills/create-viz
 
 ### Sources moteurs de recherche web
 

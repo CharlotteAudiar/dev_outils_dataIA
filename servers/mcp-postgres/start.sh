@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# Lance mcp-postgres exposé à Open WebUI via mcpo (proxy MCP -> OpenAPI).
-# Variables d'environnement requises : DATABASE_URI, MCPO_API_KEY_POSTGRES (voir config/.env.example).
-# Mode restreint (lecture seule) par défaut — voir README.md (même dossier) pour la justification.
+
+# Lance mcp-postgres exposé via mcpo (proxy MCP -> OpenAPI)
+
+## Variables d'environnement requises : DATABASE_URI, MCPO_API_KEY_POSTGRES (voir config/.env.example)
+
+## Mode restreint (lecture seule) par défaut — voir README.md (même dossier) pour la justification
 
 
 set -euo pipefail
 
-# Charge automatiquement le .env à la racine du repo s'il existe (non versionné, voir .gitignore).
-# Sinon, les variables doivent déjà être exportées dans l'environnement appelant.
+# Charge automatiquement le .env à la racine
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 if [ -f "$REPO_ROOT/.env" ]; then
   set -a

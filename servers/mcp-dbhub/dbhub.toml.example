@@ -1,0 +1,19 @@
+# Modèle de config DBHub pour le test mcp-dbhub (voir README.md, même dossier).
+# Copier en dbhub.toml (gitignoré comme les autres vrais fichiers de config, cf. .gitignore
+# racine) puis l'adapter si besoin. Le mot de passe reste hors du fichier via ${DATABASE_URI}
+# (interpolation de variable d'environnement, lue depuis le .env racine).
+
+[[sources]]
+id = "audiar_test"
+description = "Base PostgreSQL Audiar (même connexion que servers/mcp-postgres)"
+dsn = "${DATABASE_URI}"
+connection_timeout = 30
+query_timeout = 30
+
+# readonly/max_rows ne sont configurables qu'en TOML (pas de flag CLI équivalent) —
+# cohérent avec le mode --access-mode=restricted déjà retenu pour mcp-postgres.
+[[tools]]
+name = "execute_sql"
+source = "audiar_test"
+readonly = true
+max_rows = 1000

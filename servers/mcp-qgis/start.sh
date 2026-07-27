@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Lance mcp-qgis exposé à Open WebUI via mcpo (proxy MCP -> OpenAPI).
-# Prérequis : plugin "QGIS MCP" démarré dans QGIS Desktop (voir README.md, même dossier).
-# Variable d'environnement requise : MCPO_API_KEY_QGIS (voir config/.env.example).
 
+# Lance mcp-qgis exposé via mcpo (proxy MCP -> OpenAPI)
+
+
+#~# Variable d'environnement requise : MCPO_API_KEY_QGIS (voir config/.env.example)
+## Prérequis : plugin "QGIS MCP" démarré dans QGIS Desktop (voir README.md, même dossier)
 
 set -euo pipefail
 
