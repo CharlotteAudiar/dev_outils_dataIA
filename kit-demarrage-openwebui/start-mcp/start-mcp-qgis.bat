@@ -1,0 +1,1 @@
+start "MCP QGIS" cmd /k powershell -ExecutionPolicy Bypass -File "%~dp0scripts\start-mcp-qgis.ps1"

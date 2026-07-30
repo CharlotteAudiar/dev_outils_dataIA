@@ -15,6 +15,9 @@ venv/
 CLAUDE.local.md
 .cursor/mcp.json
 
+# Données utilisateurs réelles (garder seulement les .example)
+docs/user-import.csv
+
 # Cache python
 __pycache__/
 *.pyc

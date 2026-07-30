@@ -42,5 +42,5 @@ fi
 # Double slash ("//c", pas "/c") : Git Bash/MSYS convertit automatiquement tout argument de la
 # forme "/c" en chemin Windows ("C:/") avant de le transmettre à un exécutable natif comme cmd —
 # "//c" échappe cette conversion et arrive intact comme option "/c" côté cmd.
-uvx mcpo --port 8003 --api-key "$MCPO_API_KEY_DBHUB" -- \
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8003 --api-key "$MCPO_API_KEY_DBHUB" -- \
   cmd //c npx --yes "@bytebase/dbhub@latest" --transport stdio --config "$CONFIG_PATH"

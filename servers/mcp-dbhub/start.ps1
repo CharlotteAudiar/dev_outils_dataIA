@@ -7,7 +7,7 @@
 ## — DATABASE_URI est la même variable que pour mcp-postgres, donc le même compte personnel)
 ## Prérequis : Node.js >= 22.5.0 (vérifier avec node -v) ; uv/uvx déjà installé (pour mcpo,
 ## comme les autres serveurs MCP du projet). Node.js reste une dépendance nouvelle pour ce
-## projet (voir README.md, "Montage technique" et docs/architecture/benchmark.md, section
+## projet (voir README.md, "Montage technique" et docs/architecture/benchmark-techno.md, section
 ## mcp-postgres, "dépendance runtime par candidat") — à peser dans la comparaison avec
 ## mcp-postgres, qui n'en ajoute aucune.
 
@@ -44,5 +44,5 @@ if (-not (Test-Path $ConfigPath)) {
 # dbhub tourne en --transport stdio (pas son mode HTTP natif) : c'est mcpo qui l'expose en
 # OpenAPI et qui permet la connexion "Direct" personnelle attendue par Open WebUI pour ce
 # montage par poste (voir README.md, "Pourquoi stdio + mcpo, pas le HTTP natif").
-uvx mcpo --port 8003 --api-key $env:MCPO_API_KEY_DBHUB -- `
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8003 --api-key $env:MCPO_API_KEY_DBHUB -- `
     npx --yes "@bytebase/dbhub@latest" --transport stdio --config $ConfigPath

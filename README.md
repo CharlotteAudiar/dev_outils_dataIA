@@ -23,6 +23,6 @@ Pour comprendre le projet dans l'ordre plutôt que de naviguer au hasard entre l
 2. `docs/architecture/decisions.md`, section "Vue d'ensemble" — les choix retenus et leur statut, en un coup d'œil.
 3. `docs/guides.md` — installation et usage pas-à-pas.
 4. `servers/mcp-<nom>/README.md` — détail technique du serveur qui t'intéresse.
-5. `docs/architecture/benchmark.md` — seulement si tu veux la recherche comparative complète derrière une décision (pas nécessaire pour utiliser l'outil au quotidien).
+5. `docs/architecture/benchmark-techno.md` — seulement si tu veux la recherche comparative complète derrière une décision (pas nécessaire pour utiliser l'outil au quotidien).
 
 Voir aussi `AGENTS.md` pour les conventions de dev et les commandes du projet.

@@ -5,7 +5,7 @@ Neutre : servable à n'importe quel client MCP.
 
 ## Implémentation retenue (20/07/2026)
 
-**[crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp)** ("Postgres MCP Pro") — retenu plutôt que l'ancienne implémentation de référence Anthropic (archivée, faille d'injection SQL documentée). Voir `docs/architecture/benchmark.md` pour le comparatif complet.
+**[crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp)** ("Postgres MCP Pro") — retenu plutôt que l'ancienne implémentation de référence Anthropic (archivée, faille d'injection SQL documentée). Voir `docs/architecture/benchmark-techno.md` pour le comparatif complet.
 
 Fonctionnalités au-delà de la simple exécution SQL : santé de la base (index, cache, vacuum...), plans d'exécution (`EXPLAIN`), recommandations d'index. Utilise `psycopg3`/`libpq` pour la connexion.
 
@@ -15,7 +15,7 @@ Comme pour QGIS, le serveur est exposé à Open WebUI via `mcpo` (proxy MCP stdi
 
 **Commande de lancement** — packagée dans `start.sh` (même dossier) :
 ```
-uvx mcpo --port 8002 --api-key "<une-clé-au-choix>" -- uvx postgres-mcp --access-mode=restricted
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8002 --api-key "<une-clé-au-choix>" -- uvx postgres-mcp --access-mode=restricted
 ```
 - `start.sh` charge automatiquement le `.env` à la racine du repo s'il existe (`DATABASE_URI`, `MCPO_API_KEY_POSTGRES` — voir `config/.env.example` pour le modèle) ; sinon ces variables doivent déjà être exportées dans l'environnement appelant. Ne jamais committer le `.env` réel — voir `.gitignore`.
 - Port `8002` choisi arbitrairement pour ne pas entrer en conflit avec `mcpo` de `mcp-qgis` (port `8001`) si les deux tournent en même temps.

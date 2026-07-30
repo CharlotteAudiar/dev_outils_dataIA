@@ -23,7 +23,7 @@ tourner (aucun processus externe, aucune supervision à mettre en place).
 **Statut (24/07/2026)** : testé et fonctionnel chez Charlotte. Comparaison avec les MCP dédiés
 **pas encore tranchée** pour l'ensemble des cas d'usage — ce README documente uniquement la
 construction et le fonctionnement de cet outil, pas une décision d'architecture actée (voir
-`docs/architecture/decisions.md`/`benchmark.md`, non modifiés par ce test).
+`docs/architecture/decisions.md`/`benchmark-techno.md`, non modifiés par ce test).
 
 ## Fonctions exposées
 

@@ -1,6 +1,6 @@
 # Comparatif des modèles LLM disponibles
 
-Référence pour la configuration des connexions API dans Open WebUI. Trois sources couvertes : l'API cloud Mistral, l'instance auto-hébergée RAGaRenn (Eskemm Numérique) et les services OVH Cloud endpoints.
+Comparaison des modèles mis à disposition par l'API cloud Mistral, RAGaRenn (Eskemm Numérique) et les services OVH Cloud endpoints.
 
 ## Mistral AI
 

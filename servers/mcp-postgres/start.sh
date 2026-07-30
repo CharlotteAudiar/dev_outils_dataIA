@@ -20,5 +20,5 @@ fi
 : "${DATABASE_URI:?Variable DATABASE_URI non définie (voir config/.env.example)}"
 : "${MCPO_API_KEY_POSTGRES:?Variable MCPO_API_KEY_POSTGRES non définie (voir config/.env.example)}"
 
-uvx mcpo --port 8002 --api-key "$MCPO_API_KEY_POSTGRES" -- \
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8002 --api-key "$MCPO_API_KEY_POSTGRES" -- \
   uvx postgres-mcp --access-mode=restricted

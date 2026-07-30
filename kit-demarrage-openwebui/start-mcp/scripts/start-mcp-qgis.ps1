@@ -1,5 +1,5 @@
 # Lance mcp-qgis exposé via mcpo (proxy MCP -> OpenAPI)
-# Équivalent PowerShell de start.sh (même dossier) — pour postes Windows utilisateurs,
+# Équivalent PowerShell de start.sh (même dossier) : pour postes Windows utilisateurs,
 # sans dépendance à bash/WSL/Git Bash (cf. échange du 24/07/2026 : `bash` resolvait vers WSL,
 # qui ne traduit pas les chemins de lecteurs réseau mappés).
 

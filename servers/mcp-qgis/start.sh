@@ -2,22 +2,9 @@
 
 # Lance mcp-qgis exposé via mcpo (proxy MCP -> OpenAPI)
 
-
-#~# Variable d'environnement requise : MCPO_API_KEY_QGIS (voir config/.env.example)
 ## Prérequis : plugin "QGIS MCP" démarré dans QGIS Desktop (voir README.md, même dossier)
 
 set -euo pipefail
 
-# Charge automatiquement le .env à la racine du repo s'il existe (non versionné, voir .gitignore).
-# Sinon, la variable doit déjà être exportée dans l'environnement appelant.
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-if [ -f "$REPO_ROOT/.env" ]; then
-  set -a
-  source "$REPO_ROOT/.env"
-  set +a
-fi
-
-: "${MCPO_API_KEY_QGIS:?Variable MCPO_API_KEY_QGIS non définie (voir config/.env.example)}"
-
-uvx mcpo --port 8001 --api-key "$MCPO_API_KEY_QGIS" -- \
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8001 --api-key "mdp_qgis" -- \
   uvx --from git+https://github.com/nkarasiak/qgis-mcp qgis-mcp-server

@@ -21,7 +21,7 @@ Plugin retenu : **QGIS MCP** (Nicolas Karasiak, [nkarasiak/qgis-mcp](https://git
 
 **Commande de lancement (poste de l'agent)** — packagée dans `start.sh` (même dossier) :
 ```
-uvx mcpo --port 8001 --api-key "<une-clé-au-choix>" -- uvx --from git+https://github.com/nkarasiak/qgis-mcp qgis-mcp-server
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8001 --api-key "<une-clé-au-choix>" -- uvx --from git+https://github.com/nkarasiak/qgis-mcp qgis-mcp-server
 ```
 `start.sh` charge automatiquement le `.env` à la racine du repo s'il existe (`MCPO_API_KEY_QGIS` — voir `config/.env.example` pour le modèle) ; sinon la variable doit déjà être exportée dans l'environnement appelant.
 

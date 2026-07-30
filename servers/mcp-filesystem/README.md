@@ -7,4 +7,4 @@ Neutre : servable à n'importe quel client MCP.
 
 Aucun des 9 cas d'usage de `docs/sources/2026_analyse-fonctionnelle_V1.txt` n'appelle un accès fichiers générique via Open WebUI (voir `docs/architecture/decisions.md` pour le détail). N'a de sens que si un outil "mode projet" distinct d'Open WebUI est un jour retenu pour ce scope.
 
-Candidat identifié si besoin : implémentation de référence officielle [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem) — un paquet existant à installer, pas du code à écrire ici (voir `docs/architecture/benchmark.md` pour le comparatif).
+Candidat identifié si besoin : implémentation de référence officielle [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem) — un paquet existant à installer, pas du code à écrire ici (voir `docs/architecture/benchmark-techno.md` pour le comparatif).

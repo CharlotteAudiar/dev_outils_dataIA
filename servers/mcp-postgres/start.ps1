@@ -32,5 +32,5 @@ if (-not $env:MCPO_API_KEY_POSTGRES) {
     exit 1
 }
 
-uvx mcpo --port 8002 --api-key $env:MCPO_API_KEY_POSTGRES -- `
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8002 --api-key $env:MCPO_API_KEY_POSTGRES -- `
     uvx postgres-mcp --access-mode=restricted

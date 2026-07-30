@@ -3,7 +3,7 @@
 Serveur MCP PostgreSQL candidat, **en test en phase 1** (poste individuel, identifiants
 personnels) — comparé à `crystaldba/postgres-mcp` (déjà en place, `servers/mcp-postgres/`).
 Voir `docs/architecture/decisions.md`, section "Modèle de déploiement de mcp-postgres : plan en
-3 phases", pour le cadrage complet, et `docs/architecture/benchmark.md`, section `mcp-postgres`,
+3 phases", pour le cadrage complet, et `docs/architecture/benchmark-techno.md`, section `mcp-postgres`,
 pour l'alerte sur l'état de maintenance de `crystaldba` qui motive cette comparaison.
 
 ## Statut (24/07/2026) : test en cours, comparaison pas encore tranchée
@@ -44,7 +44,7 @@ le chemin "Direct", qui n'existe que pour l'OpenAPI. D'où le choix de faire tou
 `dbhub` exige Node.js ≥ 22.5 sur **chaque poste** où il tourne (phase 1 = un poste par chargé
 d'études, cf. `decisions.md`) — contrairement à `crystaldba/postgres-mcp`, qui réutilise `uv`/
 `uvx` déjà exigé pour `mcp-qgis` et n'ajoute donc rien. À 15 postes non-développeurs, c'est un
-vrai coût de déploiement/support, pas un détail — voir `docs/architecture/benchmark.md`,
+vrai coût de déploiement/support, pas un détail — voir `docs/architecture/benchmark-techno.md`,
 section `mcp-postgres`, "dépendance runtime par candidat". Point à trancher explicitement dans
 la comparaison, pas seulement les fonctionnalités des deux serveurs.
 
@@ -73,7 +73,7 @@ reste une défense en profondeur, cohérente avec le mode restreint déjà reten
    `execute_sql` avec un `SELECT` ; tenter volontairement un `UPDATE`/`INSERT` pour confirmer
    que `readonly` le bloque.
 6. **Comparer** avec `mcp-postgres` (fiabilité, pertinence des réponses, facilité de connexion)
-   et reporter le résultat dans `docs/architecture/benchmark.md`.
+   et reporter le résultat dans `docs/architecture/benchmark-techno.md`.
 
 ## Prérequis restants avant de trancher la comparaison
 

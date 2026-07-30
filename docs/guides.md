@@ -7,22 +7,22 @@ Deux environnements sont documentés dans ce fichier, avec la même structure po
 - **Prototype** : poste de travail de Charlotte (Windows + Docker Desktop), une seule utilisatrice, aucune contrainte de disponibilité.
 - **Production (Merlin)** : serveur interne mutualisé, plusieurs chargés d'études, disponibilité continue attendue. Vue d'ensemble de qui tourne où : `docs/architecture/schema-deploiement-prod.md`.
 
-Sauf mention contraire, une sous-section "Environnement production" ne réexplique pas ce qui est identique au prototype — elle suppose la sous-section prototype déjà lue, et ne documente que ce qui change.
+Sauf mention contraire, une sous-section "Environnement production" ne réexplique pas ce qui est identique au prototype : elle suppose la sous-section prototype déjà lue, et ne documente que ce qui change.
 
-## Installer Open WebUI
+## Installation d'Open WebUI
 
 ### Environnement prototype (poste local, Windows)
 
 Framework retenu : voir `docs/architecture/decisions.md`. Ce guide décrit le premier déploiement, en local sur un poste Windows, avant l'hébergement partagé sur Merlin (ci-dessous).
 
-#### Prérequis
+**Prérequis**
 
-- **Docker Desktop** installé et lancé (icône de la baleine visible dans la barre des tâches Windows). Téléchargement : https://www.docker.com/products/docker-desktop/
+- **Docker Desktop** installé et lancé. Téléchargement : https://www.docker.com/products/docker-desktop/
   - À l'installation, choisir le backend **WSL2** si proposé (recommandé sur Windows).
   - Après installation, un redémarrage du poste est parfois demandé.
 - Une connexion internet (pour télécharger l'image Open WebUI la première fois).
 
-#### Étape 1 — Vérifier que Docker fonctionne
+**Étape 1 — Vérifier que Docker fonctionne**
 
 Ouvrir un terminal (PowerShell, ou Git Bash intégré à VS Code — les commandes `docker` sont identiques dans les deux) et taper :
 
@@ -31,8 +31,7 @@ docker --version # vérif n° de version
 docker ps # liste application docker (docker doit être lancé)
 ```
 
-#### Étape 2 — Installer et lancer Open WebUI
-
+**Étape 2 — Installer et lancer Open WebUI**
 Dans le même terminal :
 
 ```bash
@@ -47,17 +46,17 @@ Détail de la commande :
 
 Le premier lancement télécharge l'image (plusieurs centaines de Mo, peut prendre quelques minutes).
 
-#### Étape 3 — Créer le compte admin
+**Étape 3 — Créer le compte admin**
 
 Ouvrir `http://localhost:3000` dans un navigateur. Le premier compte créé devient automatiquement administrateur. Choisir un email/mot de passe (peuvent être différents de ceux du poste).
 
-#### Étape 4 — Vérifier la version
+**Étape 4 — Vérifier la version**
 
 Le fichier JSON disponible à l'adresse http://localhost:3000/api/config indique dans les premiers champs la version d'Open WebUI installée.
 
 Le numéro de version est aussi indiqué dans le menu "A propos" du panneau "Réglages", accessible en cliquant sur la bulle "Profil" (en haut à droite ou en bas à gauche).
 
-#### Étape 5 — Lancer Open WebUI une fois installé
+**Étape 5 — Lancer Open WebUI une fois installé**
 
 ```bash
 docker start open-webui # open webui lancé en arrière-plan
@@ -67,35 +66,160 @@ docker start open-webui # open webui lancé en arrière-plan
 
 Delta par rapport au prototype ci-dessus — mêmes principes (image Docker officielle, volume persistant), sur un serveur Linux partagé plutôt qu'un poste Windows individuel.
 
-- **Commande Docker** : même logique que l'Étape 2 du prototype, sans le flag propre à Docker Desktop :
+- **Commande Docker** : même logique que l'étape 2 du prototype :
   ```bash
-  docker run -d -p 3000:8080 -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+  docker run -d -p 1111:0000 -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main # 1111:0000 = port docker et conteneur à renseigner
   ```
-  `--add-host=host.docker.internal:host-gateway` n'est utile que si le conteneur doit atteindre un service tournant directement sur l'hôte Merlin, hors conteneur (ex. un futur `mcp-postgres` centralisé non conteneurisé — cf. section "mcp-postgres" ci-dessous) — pas nécessaire tant que ce cas ne se présente pas.
-- **Accès réseau** : `http://<adresse-merlin>:3000` en HTTP simple suffit pour un pilote interne. Un reverse proxy (Nginx/Caddy) devient nécessaire pour une URL propre, du HTTPS, ou les fonctions qui l'exigent (ex. appels vocaux) — pas fait à ce stade, à ajouter si le pilote est concluant.
+
+- **Accès réseau** : `http://srv-gitlab.audiar.net:0000`
+
 - **Volume** : même logique qu'en local (`-v open-webui:/app/backend/data`), sur le disque du serveur Merlin.
 
-#### Paramétrer les droits Open WebUI (instance mutualisée)
+Remarque : les applications tournant en docker sur Merlin actuellement sont lancées via la commande  `docker compose` et des fichiers de configuration YAML `docker-compose.yml` et `docker-compose.dev.yml`.
 
-Prérequis générique, valable pour tout serveur MCP métier exposé via `mcpo` — pas spécifique à un serveur en particulier (justification technique complète : `docs/architecture/decisions.md`, section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`").
+### Dépannage courant
 
-- Version Open WebUI ≥ 0.6.31 pas nécessaire pour ce montage (on utilise OpenAPI, pas le MCP natif) — utile seulement si un autre outil MCP natif est ajouté par ailleurs.
-- Instance mutualisée : deux réglages distincts nécessaires côté admin, tous deux désactivés par défaut —
-  1. **Toggle global** : *Admin Panel → Settings → Connections → "Direct Connections"* → ON (sans lui, personne — même un admin — n'a accès aux connexions directes). En français : *Panneau d'administration → Réglages → Connexions → « Direct connexions »*.
-  2. **Permission par utilisateur/groupe** : *Admin Panel → Users → Groups → Default permissions (ou un groupe dédié) → Features → "Direct Tool Servers"* → ON. En français : *Panneau d'administration → Utilisateurs → Groupes → « Modifier les autorisations par défaut » → section « Autorisations des fonctionnalités » → toggle « Serveur d'outils directs »* (confirmé sur l'instance de Charlotte le 20/07/2026 — désactivé par défaut).
-
-### Dépannage courant (Open WebUI)
-
-- **Page inaccessible sur `localhost:3000`** (ou l'adresse Merlin en production) : vérifier que le conteneur tourne avec `docker ps` (il doit apparaître dans la liste). Sinon, consulter les logs avec `docker logs open-webui`.
-- **Port 3000 déjà utilisé** : remplacer `3000:8080` par un autre port libre, ex. `3001:8080`, et utiliser `http://localhost:3001`.
-- **Mettre à jour Open WebUI plus tard** :
+- **Mettre à jour Open WebUI** :
   ```
   docker pull ghcr.io/open-webui/open-webui:main
   docker stop open-webui && docker rm open-webui
   ```
-  puis relancer la commande de l'Étape 2 (les données sont conservées grâce au volume `open-webui`).
+  puis relancer la commande de l'étape 2 (les données sont conservées grâce au volume `open-webui`).
+  
 
-## Gestion des secrets (`.env`) en environnement mutualisé
+## Ajout de fournisseurs IA et paramétrage des modèles
+
+Les fournisseurs de modèles LLM par API — Mistral, RAGaRenn, OVHcloud AI Endpoints, catalogue comparé dans `docs/benchmark-modeles.md` — se connectent via le protocole **OpenAI-compatible**, nativement supporté par Open WebUI.
+
+Source  : [OpenAI-Compatible / Open WebUI](https://docs.openwebui.com/getting-started/quick-start/connect-a-provider/starting-with-openai-compatible/).
+
+### Configurer une connexion au modèle (API)
+
+1. `Panneau d'administration` → `Réglages` → `Connexions` → `➕ Ajouter une connexion`.
+
+2. Renseigner `URL` et `Auth` (Bearer = clé API) du fournisseur.
+
+3. Open WebUI vérifie la connexion en appelant l'endpoint `/models` du fournisseur avec le Bearer token. 
+
+4. Si besoin, préciser les id des modèles visés.
+
+5. Pour faciliter la gestion des modèles une fois les connexions configurées, il est possible de renseigner un ID de préfixe. 
+
+**Remarque** : À l'étape 3, si l'appel  à l'endpoint échoue (403/400/401) sans que le fournisseur soit incompatible pour autant, ajouter manuellement les IDs de modèles dans **"Model IDs (Filter)"** de la connexion peut résoudre les problèmes de connexion (la connexion affiche un statut d'erreur mais le chat fonctionne).
+
+
+### Paramétrage des modèles
+Une fois les connexions configurées, les modèles disponibles peuvent être gérés dans le menu "Modèles".
+
+Sources : 
+- [Open WebUI](https://docs.openwebui.com/getting-started/quick-start/settings/)
+- [Open WebUI](https://docs.openwebui.com/features/workspace/models/)
+
+1. `Panneau d'administration` → `Réglages` → `Modèles`.
+
+2. Indiquer quels modèles sont disponibles en activant/désactivant les boutons
+
+3. `Panneau d'administration` → `Réglages` → `Modèles` → `✏️`.
+
+4. La configuration du modèle peut être adaptée si besoin : 
+   - Réglages avancés : permet de renseigner un certain nombre de paramètres des requêtes (nombre maximum de token, paramètres d'échantillonnage, efforts de raisonnement...)
+   - Capacités : permet de fixer ce que le modèle a le droit de faire ;
+   - Fonctionnalités par défaut : si cochées, elles sont automatiquement activées à chaque nouvelle conversation. Les trois fonctionnalités – recherche web, génération d'images et interpréteur de code – doivent être configurées ailleurs ;
+   - Outils intégrés : outils que le modèle peut appeler lui-même via des appels de fonction. 
+
+5. Pour rendre les modèles accessibles à d'autres utilisateurs, deux possibilités : 
+  - configurer l'accès comme "public" ;
+  - configurer l'accès comme "privé" et accorder des droits à des utilisateurs ou des groupes.
+
+### Comptage des tokens dans l'Analytique
+
+Symptôme : `Panneau d'administration` → `Analytique` affiche **0 token** pour toutes les conversations, alors que les messages et les utilisateurs sont bien comptés.
+
+Cause : Open WebUI ne compte que ce que le fournisseur renvoie dans le champ `usage` de sa réponse, et ce champ est absent des réponses en **streaming** (mode d'affichage par défaut) sauf demande explicite via le paramètre `stream_options`. Vérifié le 30/07/2026 par appel direct à la connexion RAGaRenn (backend Ollama, cf. `system_fingerprint: fp_ollama` dans les réponses) :
+
+| Requête envoyée au fournisseur | Champ `usage` dans la réponse |
+|---|---|
+| `"stream": false` | Oui |
+| `"stream": true` | **Non** |
+| `"stream": true` + `"stream_options": {"include_usage": true}` | Oui (chunk supplémentaire avant `data: [DONE]`) |
+
+Le fournisseur sait donc fournir l'information : il faut la lui demander.
+
+Correctif : cocher la capacité **`Usage`** du modèle — libellée **`Utilisation`** en français (confirmé sur l'instance Audiar le 30/07/2026) — qui fait ajouter `stream_options` par Open WebUI sans avoir à désactiver le streaming.
+- Par modèle : `Panneau d'administration` → `Réglages` → `Modèles` → `✏️` → `Capacités`.
+- Pour tous les modèles : `Panneau d'administration` → `Réglages` → `Modèles` → `Réglages` (bouton en haut à droite) → `Valeurs par défaut` → `Capacités du modèle` → section `Capacités`.
+
+Attention : les réglages de `Valeurs par défaut` peuvent être surchargés par la configuration propre à chaque modèle — vérifier les deux. Le comptage n'est pas rétroactif : tester sur une **nouvelle** conversation, les anciennes restent à 0.
+
+Source : [Langfuse / Open WebUI](https://docs.openwebui.com/tutorials/integrations/monitoring/langfuse/) — « Capture usage (token counts) for OpenAi models while streaming is enabled, you have to navigate to the model settings in Open WebUI and check the "Usage" box below Capabilities. » (À confirmer sur l'instance Audiar : non encore testé au 30/07/2026. Repli si la capacité `Usage` est absente de cette version : `Réglages du modèle` → `Streamer la réponse de la conversation` → `Désactivé`, au prix de la perte de l'affichage progressif des réponses.)
+
+**Limite à connaître** : même corrigé, ce compteur reste un **agrégat** par modèle et par utilisateur sur une période, sans détail par conversation ni export. Il répond à « combien consomme-t-on au total, avec quel modèle », pas à « quel modèle est le plus économique pour telle tâche » (les prompts diffèrent d'une conversation à l'autre, donc les totaux ne sont pas comparables entre modèles). Une comparaison coût/performance suppose un jeu de prompts figé rejoué à l'identique sur chaque modèle — voir `docs/benchmark-modeles.md`.
+
+## Gestion des droits
+
+La gestion des droits des utilisateurs et des groupes se gèrent à trois niveaux : 
+  - via `Panneau d'administration` → `Réglages` : gestion des accès des utilisateurs et des groupes aux modèles (voir plus haut la section "Paramétrage des modèles") et aux outils externes (serveurs OpenAPI ou serveurs MCP via proxy mcpo) configurés par les administrateurs ;
+  - via `Panneau d'administration` → `Utilisateurs` → `Groupes` : gestion des autorisations de tous les utilisateurs (Autorisations par défaut) et de celles des groupes (`Groupes` dans les réglages du groupe) ;
+  - via `Espaces de travail` : chaque outil, skill, prompt, connaissance et modèle (dans cet espace, un "modèle" associe un modèle d'IA et et un ensemble d'éléments : outils, skills, prompts, connaissances) : gestion de l'accès des utilisateurs et des groupes à ces éléments.
+
+### Rôles disponibles
+
+Source officielle : [Roles / Open WebUI](https://docs.openwebui.com/features/authentication-access/rbac/roles/).
+
+Trois rôles système, aussi utilisés comme valeurs de la colonne `Role` du CSV d'import (ci-dessous) :
+
+
+| Roles          | Key     | Description                                      |
+|-----------------|---------|--------------------------------------------------------|
+| Administrateur  | `admin` | Accès total : gestion des utilisateurs, groupes, config globale  |
+| Utilisateur     | `user`  | Soumis aux permissions RBAC (défauts + groupes), aucun accès implicite              |
+| En attente      | `pending` | Aucun accès tant qu'un admin ne l'a pas approuvé manuellement — recommandé comme rôle par défaut sur une instance partagée (`DEFAULT_USER_ROLE=pending`)|
+
+### Premier compte admin
+
+La documentation officielle précise que le tout premier compte créé sur l'instance ("primary administrator") a une protection : pas de bouton de suppression dans l'interface. Elle présente ça comme "un garde-fou de confort, pas une frontière de sécurité". Selon le code source (analyse IA, Claude Sonnet 5), le rôle du primary administrator est verrouillé sur `admin` de façon permanente, au niveau backend (403 `ACTION_PROHIBITED`) : il ne peut pas s'auto-rétrograder et aucun autre admin ne peut changer son rôle.
+
+Les autres comptes admin (créés après le premier) n'ont pas cette protection : leur rôle reste librement modifiable par n'importe quel admin, y compris vers `user` ou `pending`.
+
+
+### Gestion des utilisateurs et des groupes
+
+Deux possibilités pour ajouter des utilisateurs : manuellement ou via un fichier csv, selon un modèle fixe (`docs/user-import.example.csv`).
+
+Concernant la création via un fichier csv, il faut noter qu'il ne permet pas une gestion globale : 
+- si un utilisateur avec la même adresse email existe déjà, il n'est pas ajouté, et la configuration de l'utilisateur déjà enregistré ne change pas ;
+- si un utilisateur existant n'est pas renseigné dans le csv, son compte n'est pas supprimé. 
+
+Ce fichier doit par ailleurs faire l'objet d'une grande vigilance puisqu'il contient les mots de passe des utilisateurs.
+
+Les autorisations des utilisateurs se gèrent via les groupes. Des utilisateurs peuvent être ajoutés seulement une fois le groupe créé.
+
+
+## Outils associés
+
+Comme les modèles, les outils configurés par les administrateurs sont "privés" par défaut. 
+
+Plusieurs types d'outils :
+- serveurs d'outils externes : 
+https://docs.openwebui.com/features/extensibility/plugin/tools/openapi-servers/
+
+**Toggle global** : *Admin Panel → Settings → Connections → "Direct Connections"* → ON nécessaire pour qu'un utilisateur puisse installer ces propres outils
+
+- espace de travail : 
+outil, skill, prompt, connaissance
+
+deux réglages distincts nécessaires côté admin, tous deux désactivés par défaut —
+  1.  (sans lui, personne — même un admin — n'a accès aux connexions directes). En français : *Panneau d'administration → Réglages → Connexions → « Direct connexions »*.
+  2. **Permission par utilisateur/groupe** : *Admin Panel → Users → Groups → Default permissions (ou un groupe dédié) → Features → "Direct Tool Servers"* → ON. En français : *Panneau d'administration → Utilisateurs → Groupes → « Modifier les autorisations par défaut » → section « Autorisations des fonctionnalités » → toggle « Serveur d'outils directs »* (confirmé sur l'instance de Charlotte le 20/07/2026 — désactivé par défaut).
+
+  | | Admin (Global) — "External Tool Servers" | Utilisateur (Direct) — "Gérer les serveurs d'outils" |
+|---|---|---|
+| Configuré par | L'admin, une seule fois | Chaque utilisateur, individuellement |
+| Visible par | Selon les règles d'accès (contrôle d'accès du serveur : public/privé/groupes) | Seulement l'utilisateur qui l'a ajouté |
+| D'où part l'appel réseau | Le backend/conteneur Open WebUI (`localhost` = le conteneur) | Le navigateur de l'utilisateur (`localhost` = son propre poste) |
+
+
+### Gestion des secrets (`.env`) en environnement mutualisé
 
 Transverse à tous les serveurs MCP (pas seulement `mcp-postgres` ou `mcp-qgis`) — écrit une fois ici, référencé depuis chaque section serveur plutôt que réexpliqué à chaque fois.
 
@@ -108,6 +232,9 @@ Transverse à tous les serveurs MCP (pas seulement `mcp-postgres` ou `mcp-qgis`)
 ## Configurer les serveurs MCP (principe général)
 
 Plusieurs serveurs MCP métier doivent être installés : QGIS, PostgreSQL, filesystem, Excel en particulier.
+
+
+
 
 ### Principe général
 
@@ -123,6 +250,8 @@ Deux écrans distincts, avec un mécanisme différent — vérifié le 22/07/202
 Le choix entre les deux dépend de la cible, pas seulement de l'endroit où tourne l'outil : une cible unique valable pour tout le monde peut passer par Global (ex. un serveur centralisé à identité partagée) ; une cible propre à chaque utilisateur doit passer par Direct, même si l'outil tourne physiquement sur Merlin (ex. `mcp-qgis`, ou tout serveur avec des identifiants personnels).
 
 Dans les deux cas, un bouton **"+"** permet d'ajouter une connexion. Type à choisir : **OpenAPI**, avec l'URL de `mcpo` et une clé Bearer.
+
+**Astuce Docker** : si le fournisseur tourne sur l'hôte (pas le cas de Mistral/RAGaRenn/OVH, tous distants), remplacer `localhost` par `host.docker.internal` dans l'URL — même logique que pour les serveurs MCP (cf. ci-dessus).
 
 ## Checklist de déploiement d'un nouveau serveur MCP (instance mutualisée)
 
@@ -207,6 +336,22 @@ Laisser ce terminal ouvert tant que la connexion QGIS doit rester disponible dan
 
 Enregistrer, puis tester dans une conversation (activer l'outil, demander un `ping`).
 
+### Dépannage : `ImportError: cannot import name 'streamablehttp_client'`
+
+Symptôme au lancement de `start.sh`/`start.ps1` :
+```
+ImportError: cannot import name 'streamablehttp_client' from 'mcp.client.streamable_http'
+```
+
+Cause : `mcpo` déclare sa dépendance à `mcp` sans plafond de version (`mcp>=1.17.0`, aucune borne haute). Depuis la sortie de `mcp` 2.0.0, la fonction importée par `mcpo` a été renommée (`streamablehttp_client` → `streamable_http_client`), cassant la compatibilité. `uv` résolvant par défaut la version la plus récente disponible, toute installation (même sur un poste neuf, sans lien avec un cache local) récupère `mcp` 2.0.0 et échoue.
+
+Correctif appliqué dans `start.sh`/`start.ps1` : figer explicitement les deux versions testées comme compatibles ensemble, pas seulement celle de `mcpo` :
+```
+uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8001 --api-key "..." -- ...
+```
+
+À revoir si une future version de `mcpo` déclare officiellement un support de `mcp` 2.x — retester avant de lever ce pin.
+
 ### Environnement production (déploiement à plusieurs postes)
 
 `mcp-qgis` reste un serveur **par poste** en production, jamais centralisé (le plugin agit sur le projet QGIS ouvert à l'écran de chaque agent — cf. `docs/architecture/schema-deploiement-prod.md`). Le delta par rapport au prototype ci-dessus est donc surtout un delta de **packaging**, pas d'architecture :
@@ -220,7 +365,7 @@ Statut détaillé de ce qui est déjà validé vs. restant à faire : `servers/m
 
 ## mcp-postgres
 
-Serveur MCP pour interroger la base de données PostgreSQL métier (cas d'usage 2 de l'analyse fonctionnelle). Décision d'implémentation et comparatif : `servers/mcp-postgres/README.md` et `docs/architecture/benchmark.md`.
+Serveur MCP pour interroger la base de données PostgreSQL métier (cas d'usage 2 de l'analyse fonctionnelle). Décision d'implémentation et comparatif : `servers/mcp-postgres/README.md` et `docs/architecture/benchmark-techno.md`.
 
 ### Environnement prototype (poste de Charlotte)
 
@@ -267,3 +412,16 @@ Reste également ouvert, quel que soit le choix ci-dessus : comment ce service e
 Serveur MCP pour la lecture/modification de fichiers. **Statut : reporté**, pas de priorité dans le scope Open WebUI actuel — aucun des 9 cas d'usage de l'analyse fonctionnelle ne l'appelle (voir `docs/architecture/decisions.md` et `servers/mcp-filesystem/README.md`).
 
 Pas-à-pas à écrire une fois ce serveur configuré à son tour, suivant la même structure "Environnement prototype" / "Environnement production" que `mcp-qgis` et `mcp-postgres` ci-dessus.
+
+
+## recherche sur le web
+https://docs.openwebui.com/features/chat-conversations/web-search/providers/external/
+
+
+## Fonctionnalités pour plus tard
+
+### Fonctions
+Une fonction modifie le comportement du backend Open WebUI lui-même : elle s'exécute côté serveur, indépendamment du function calling du modèle. Il en existe trois types :
+- Pipe — crée une entrée "modèle" personnalisée qui apparaît dans le sélecteur de modèles, comme si c'était un LLM classique. Sert typiquement à brancher une API externe non supportée nativement, ou à construire un pipeline (RAG custom, agent multi-étapes) qui répond à la place d'un vrai modèle ;
+- Filter — s'intercale sur le flux inlet (avant que la requête parte vers le modèle) et/ou outlet (après la réponse). Sert à modifier ou enrichir silencieusement les échanges (masquage de données sensibles, injection de contexte, logging, modération...) ;
+- Action — ajoute un bouton personnalisé sous les messages du chat (ex. "traduire", "reformuler").
