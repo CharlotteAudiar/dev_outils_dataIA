@@ -1,14 +1,16 @@
 :::: {.bloc-titre}
 ::: {.typologie}
-Notice utilisateur
+Notice utilisateur v0
 :::
 
-# Kit de démarrage Open WebUI
+# Données et outils IA
 
 ::: {.sous-titre}
-Guide d'installation et de prise en main
+Guide de prise en main d'Open WebUI
 :::
 ::::
+
+**Référence** : 2026-HP-INT-001
 
 ## Démarrage
 

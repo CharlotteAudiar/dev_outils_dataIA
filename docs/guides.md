@@ -1,6 +1,16 @@
-# Guides
+:::: {.bloc-titre}
+::: {.typologie}
+Notice administrateur v0
+:::
 
-Guides d'installation, d'usage et d'onboarding.
+# Données et outils IA
+
+::: {.sous-titre}
+Installation Open WebUI et outils
+:::
+::::
+
+**Référence** : 2026-HP-INT-001
 
 Deux environnements sont documentés dans ce fichier, avec la même structure pour chaque composant (« Environnement prototype » puis « Environnement production ») :
 
@@ -425,3 +435,19 @@ Une fonction modifie le comportement du backend Open WebUI lui-même : elle s'ex
 - Pipe — crée une entrée "modèle" personnalisée qui apparaît dans le sélecteur de modèles, comme si c'était un LLM classique. Sert typiquement à brancher une API externe non supportée nativement, ou à construire un pipeline (RAG custom, agent multi-étapes) qui répond à la place d'un vrai modèle ;
 - Filter — s'intercale sur le flux inlet (avant que la requête parte vers le modèle) et/ou outlet (après la réponse). Sert à modifier ou enrichir silencieusement les échanges (masquage de données sensibles, injection de contexte, logging, modération...) ;
 - Action — ajoute un bouton personnalisé sous les messages du chat (ex. "traduire", "reformuler").
+
+## à intégrer 
+### Global (Admin) vs Direct (personnel) : mécanisme vérifié le 22/07/2026
+
+Le point 1 ci-dessus affirmait déjà que « Direct Tool Servers » fait partir l'appel depuis le navigateur de chacun — désormais vérifié concrètement, en testant la même URL (`http://localhost:8001`, `mcp-qgis`) depuis les deux écrans où une connexion OpenAPI peut être ajoutée :
+
+- **Admin Panel → Settings → Outils → External Tool Servers** (« Global ») : `localhost:8001` échoue (`Échec de la connexion`). Confirme que l'appel part du **backend/conteneur** Open WebUI — `localhost` y désigne le conteneur lui-même, jamais le poste de l'utilisateur.
+- **Réglages personnels → Intégrations → « Gérer les serveurs d'outils »** (« Direct ») : `localhost:8001` réussit (`Connexion réussie`). Confirme que l'appel part bien du **navigateur** de l'utilisateur — `localhost` y désigne son propre poste, quel que soit l'endroit où tourne le backend Open WebUI (poste local aujourd'hui, Merlin demain).
+
+**Règle de choix** entre les deux, qui ne dépend pas seulement de l'endroit où tourne l'outil mais de la cible qu'il représente :
+- **Cible unique, valable pour tout le monde** (ex. un serveur centralisé à identité technique partagée) → chemin **Global**, configuré une fois par l'admin. Fonctionne dès que le backend et l'outil tournent sur le même serveur (ex. futur `mcp-postgres` centralisé sur Merlin).
+- **Cible propre à chaque utilisateur** (ex. `mcp-qgis`, ou tout serveur nécessitant des identifiants personnels — cf. `docs/guides.md`, section « Gestion des secrets ») → chemin **Direct**, configuré individuellement par chaque utilisateur dans ses réglages personnels, même si l'outil tourne physiquement sur Merlin plutôt que sur son poste.
+
+Piste non vérifiée pour concilier centralisation et identifiants personnels sans faire reconfigurer chaque utilisateur : le bouton **« Accès »** visible sur l'écran *External Tool Servers* (Admin) suggère une restriction d'accès par connexion, comme pour les modèles — permettrait de déclarer N connexions Global (une par utilisateur) tout en limitant chacune à son propriétaire. À tester avant d'en dépendre pour `mcp-postgres`.
+
+**Correction associée** : l'URL `http://host.docker.internal:8001` documentée jusqu'ici pour la connexion « Direct » de `mcp-qgis` (`servers/mcp-qgis/README.md`) était incorrecte pour ce chemin précis — probablement une confusion avec le chemin Admin/Global, où elle, en revanche, est correcte (le conteneur doit sortir vers l'hôte). Le chemin Direct doit utiliser `http://localhost:8001`, jamais `host.docker.internal`. Point de vigilance non résolu : une fois Open WebUI servi depuis une autre origine que `localhost` (Merlin, avec ou sans HTTPS), le navigateur enverra cette nouvelle origine dans sa requête vers le `mcpo` local de l'utilisateur — `mcpo`/`qgis-mcp-server` doivent l'accepter en CORS, sans quoi la requête est bloquée malgré des identifiants corrects. Non testé au-delà d'un Open WebUI servi en local (origine triviale).

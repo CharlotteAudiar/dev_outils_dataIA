@@ -1,4 +1,16 @@
-# Comparatif des modèles LLM disponibles
+:::: {.bloc-titre}
+::: {.typologie}
+Benchmark modèles v0
+:::
+
+# Données et outils IA
+
+::: {.sous-titre}
+Étude et expérimentations
+:::
+::::
+
+**Référence** : 2026-HP-INT-001
 
 Comparaison des modèles mis à disposition par l'API cloud Mistral, RAGaRenn (Eskemm Numérique) et les services OVH Cloud endpoints.
 
