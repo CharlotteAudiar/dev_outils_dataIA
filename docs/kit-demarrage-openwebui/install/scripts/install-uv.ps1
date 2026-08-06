@@ -1,4 +1,4 @@
-# Installe `uv` (gestionnaire d'outils Python requis par les scripts mcp-*), s'il n'est pas
+﻿# Installe `uv` (gestionnaire d'outils Python requis par les scripts mcp-*), s'il n'est pas
 # déjà présent. Méthode retenue : installeur officiel Astral, autonome (ne nécessite pas
 # Python/pip pré-installés) : voir docs/guides.md pour les autres méthodes possibles et
 # pourquoi celle-ci est recommandée pour ce kit.

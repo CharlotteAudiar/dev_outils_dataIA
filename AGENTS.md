@@ -6,7 +6,7 @@ Lu nativement par Cursor. `CLAUDE.md` importe ce fichier pour Claude Code.
 ## Stack
 
 - Framework d'orchestration : **Open WebUI** (instance "Open WebUI Audiar" — décision et justification dans `docs/architecture/decisions.md`)
-- Serveurs MCP métier : QGIS, filesystem, PostgreSQL, Excel (voir `servers/`), exposés à Open WebUI via le proxy `mcpo` (MCP → OpenAPI)
+- Serveurs MCP métier : QGIS, filesystem, Excel (voir `servers/`), exposés à Open WebUI via le proxy `mcpo` (MCP → OpenAPI). PostgreSQL n'est plus un serveur MCP depuis le 03/08/2026 : accès via un outil Python natif Open WebUI (`outils-openwebui/explorateur-postgres/`) — `servers/mcp-postgres/` et `servers/mcp-dbhub/` sont conservés pour mémoire mais abandonnés.
 - Langage(s) : à définir
 
 ## Structure du repo
@@ -33,12 +33,28 @@ Lu nativement par Cursor. `CLAUDE.md` importe ce fichier pour Claude Code.
 - Tout lancement `uvx mcpo` doit épingler `mcpo@<version>` **et** sa dépendance `mcp` via `--with "mcp==<version>"` — jamais `uvx mcpo` nu. Raison : `mcpo` déclare `mcp>=1.17.0` sans plafond, et `mcp` 2.0.0 a renommé une fonction que `mcpo` importe, cassant toute résolution fraîche (détail : `docs/guides.md`, section "Dépannage" sous mcp-qgis).
 - Jamais de tiret cadratin (`—`) dans un script (`.ps1`/`.sh`/`.bat`), y compris en commentaire — préférer `:` ou `-`. Raison : sans BOM, Windows PowerShell 5.1 peut lire un `.ps1` UTF-8 avec le mauvais encodage système ; un `—` placé dans une chaîne de caractères peut alors être mal interprété comme un guillemet fermant et faire planter le script avec une erreur de type "terminateur manquant", loin de la vraie cause (constaté sur `kit-demarrage-openwebui/install-uv.ps1`, 29/07/2026).
 
+## Conventions typographiques (documentation)
+
+Deux formes seulement, alignées sur les guides de style Google et Microsoft — accents graves pour ce qu'on tape ou qu'on ouvre, gras pour ce sur quoi on clique.
+
+| Élément | Forme | Exemple |
+|---|---|---|
+| Chemins, fichiers, dossiers | accents graves | `docs/architecture/decisions.md`, `%LOCALAPPDATA%\uv\cache` |
+| Commandes, options, code inline | accents graves | `docker start open-webui`, `--api-key` |
+| Variables d'environnement, noms de tables | accents graves | `DATABASE_URL`, `config` |
+| Menus, boutons, onglets, libellés d'interface | gras | **Panneau d'administration** → **Réglages** → **Connexions** |
+
+- Jamais de chemin en gras ni entre crochets : hors police code, l'antislash est un caractère d'échappement Markdown (`C:\Users\clm` rendu hors code donne `C:Usersclm`) et les crochets sont la syntaxe de lien, ce qui casse silencieusement au rendu Pandoc.
+- Pas de gras cumulé avec les accents graves : la police code suffit.
+- Chaînes de navigation : séparateur `→`, chaque libellé en gras séparément, jamais le gras sur toute la chaîne.
+- Libellés d'interface en français (langue de l'instance), l'anglais entre parenthèses seulement quand il aide à retrouver la documentation officielle.
+
 ## Commandes
 
 - Lancer Open WebUI (déjà installé) : `./scripts/start-openwebui.sh` (installation initiale : `docs/guides.md`)
-- Lancer mcp-qgis : `./servers/mcp-qgis/start.sh` (requiert `MCPO_API_KEY_QGIS` dans `.env` racine + plugin QGIS MCP démarré côté QGIS Desktop)
-- Lancer mcp-postgres : `./servers/mcp-postgres/start.sh` (requiert `DATABASE_URI` et `MCPO_API_KEY_POSTGRES` dans `.env` racine)
-- Lancer mcp-dbhub (**phase 1, en comparaison avec mcp-postgres — pas encore tranché**, voir `servers/mcp-dbhub/README.md` et `docs/architecture/decisions.md`) : `./servers/mcp-dbhub/start.ps1` (requiert `DATABASE_URI`, `MCPO_API_KEY_DBHUB` dans `.env` racine, et `dbhub.toml` copié depuis `dbhub.toml.example`, même dossier)
+- Lancer mcp-qgis : `./servers/mcp-qgis/start.sh` (clé `--api-key` en dur dans le script, à éditer localement + plugin QGIS MCP démarré côté QGIS Desktop)
+- Accès Postgres : plus de serveur MCP à lancer — outil Python natif Open WebUI, voir `outils-openwebui/explorateur-postgres/README.md` (identifiants renseignés par chaque utilisateur dans ses réglages personnels)
+- `servers/mcp-postgres/` et `servers/mcp-dbhub/` : **abandonnés** (03/08/2026), conservés pour mémoire — ne plus les lancer
 - Logs Open WebUI : `docker logs open-webui` (`-f` pour suivre en direct, `--tail 100` pour les 100 dernières lignes)
 - Pas de lint/tests à ce stade : le repo assemble des outils existants (Open WebUI, serveurs MCP tiers) — aucun code applicatif propre au projet pour l'instant.
 

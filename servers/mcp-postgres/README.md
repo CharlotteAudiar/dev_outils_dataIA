@@ -1,9 +1,11 @@
-# mcp-postgres
+# mcp-postgres (abandonné)
+
+**Abandonné le 03/08/2026** : remplacé par un outil Python natif Open WebUI, retenu pour l'accès à la base de données plutôt qu'un serveur MCP dédié — voir `outils-openwebui/explorateur-postgres/README.md` pour la solution actuelle et `docs/architecture/decisions.md`, section "Accès à la base de données", pour la justification complète. Contenu ci-dessous conservé pour mémoire (contexte de l'essai MCP), sans actualité opérationnelle.
 
 Serveur MCP pour interroger la base de données PostgreSQL (cas d'usage 2 de l'analyse fonctionnelle : "extraction de données depuis une table en base").
 Neutre : servable à n'importe quel client MCP.
 
-## Implémentation retenue (20/07/2026)
+## Implémentation testée (20/07/2026)
 
 **[crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp)** ("Postgres MCP Pro") — retenu plutôt que l'ancienne implémentation de référence Anthropic (archivée, faille d'injection SQL documentée). Voir `docs/architecture/benchmark-techno.md` pour le comparatif complet.
 
@@ -20,7 +22,7 @@ uvx --with "mcp==1.29.0" mcpo@0.0.20 --port 8002 --api-key "<une-clé-au-choix>"
 - `start.sh` charge automatiquement le `.env` à la racine du repo s'il existe (`DATABASE_URI`, `MCPO_API_KEY_POSTGRES` — voir `config/.env.example` pour le modèle) ; sinon ces variables doivent déjà être exportées dans l'environnement appelant. Ne jamais committer le `.env` réel — voir `.gitignore`.
 - Port `8002` choisi arbitrairement pour ne pas entrer en conflit avec `mcpo` de `mcp-qgis` (port `8001`) si les deux tournent en même temps.
 
-**Connexion côté Open WebUI** : *Intégrations → Gérer les serveurs d'outils* (pas "Connexions", cf. `servers/mcp-qgis/README.md`) → Type OpenAPI, URL `http://localhost:8002` (ou `http://host.docker.internal:8002` si Open WebUI tourne en Docker), Auth Bearer + la même clé que `--api-key`.
+**Connexion côté Open WebUI** : **Intégrations** → **Gérer les serveurs d'outils** (pas **Connexions**) → Type **OpenAPI**, URL `http://localhost:8002` (ou `http://host.docker.internal:8002` si Open WebUI tourne en Docker), Auth Bearer + la même clé que `--api-key`.
 
 ## Mode d'accès : restreint par défaut
 

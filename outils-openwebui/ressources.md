@@ -69,7 +69,7 @@ ci-dessous). Ne jamais importer un Tool communautaire sans en lire le code en en
 
 Un Tool exécute du code Python arbitraire **directement sur le serveur qui héberge Open WebUI**.
 Donner à quelqu'un le droit de créer/importer un Tool équivaut à lui donner un accès shell au
-serveur. Restreindre qui peut créer des Tools (Workspace) aux personnes de confiance, et relire le
+serveur. Restreindre qui peut créer des Tools (**Espaces de travail**) aux personnes de confiance, et relire le
 code de tout Tool avant de l'importer — le sien ou celui d'un tiers.
 
 ## Valves et UserValves, en clair
@@ -77,10 +77,10 @@ code de tout Tool avant de l'importer — le sien ou celui d'un tiers.
 Les deux servent à exposer des réglages configurables dans l'interface d'Open WebUI, sans toucher
 au code :
 
-- **`Valves`** : réglages **globaux**, modifiables uniquement par un admin (menu Workspace →
-  Outils). Adapté à une config partagée par tout le monde (ex. une URL de service commune).
+- **`Valves`** : réglages **globaux**, modifiables uniquement par un admin (menu **Espaces de travail** →
+  **Outils**). Adapté à une config partagée par tout le monde (ex. une URL de service commune).
 - **`UserValves`** : réglages **par utilisateur**, que chaque personne renseigne elle-même dans
-  ses Réglages personnels → Outils. C'est le mécanisme utilisé dans `postgres-explorer` pour que
+  ses **Réglages** personnels → **Outils**. C'est le mécanisme utilisé dans `postgres-explorer` pour que
   chacun renseigne son propre compte Postgres, sans que ces identifiants transitent par un admin.
 
 Techniquement, les deux sont des classes qui héritent de `pydantic.BaseModel`, avec un champ par

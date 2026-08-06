@@ -47,8 +47,8 @@ Le détail sur les cas d'usages (CU) peut être consulté dans l'analyse fonctio
 | Composant | Cas d'usage | Outil retenu | Statut (03/08/2026) | Détail |
 |-----|----|------|------|--------|
 | Solution d'orchestration | CU1 à CU7 | **Open WebUI** | Prototype local et Merlin créés  | Section « Solution d'orchestration » ci-dessous |
-| Accès base de données | CU1, CU2 et CU4 | outil python | Monté sur Merlin, à optimiser | outils-openwebui/explorateur-postgres/readme.md |
-| Utilisation QGIS | CU5 | MCP local [nkarasiak/qgis-mcp](https://github.com/nkarasiak/qgis-mcp) | Configuré sur Merlin, en test | `servers/mcp-qgis/README.md` |
+| Accès base de données | CU1, CU2 et CU4 | outil python | Monté sur Merlin, à optimiser | outils-openwebui/explorateur-postgres/README.md |
+| Utilisation QGIS | CU5 | MCP local [nkarasiak/qgis-mcp](https://github.com/nkarasiak/qgis-mcp) | Configuré sur Merlin, en test | `docs/guides.md`, section « MCP QGIS (serveur externe) » |
 | Utilisation Excel | CU3 et CU4 | MCP [haris-musa/excel-mcp-server](https://github.com/haris-musa/excel-mcp-server) | À monter sur prototype local  |  |
 | Recherche web | CU4 | Brave, SearXNG et Tavily benchmarkés | À l'étude | `benchmark-techno.md` |
 :::
@@ -111,14 +111,14 @@ Ils se différencient selon quatre principaux critères :
 La licence Open WebUI n'est plus certifiée OSI (Open Source Initiative) depuis la v0.6.6 (BSD 3-Clause + clause de marque), passant de "open source" à "source disponible". Cela ne restreint pas l'usage mais un resserrement du modèle économique du projet (soutenabilité, monétisation possible) est à surveiller. Des discussions de fork ont déjà eu lieu dans la communauté à ce sujet, aucun fork dominant et pérenne ne s'est imposé à ce jour.
 
 
-## Extensibilité Open WebUI et contraintes
+## Dispositifs d'extension et contraintes de déploiement
 
 ### Quatre dispositifs
 L'ajout de fonctionnalités dans Open WebUI peut se faire via quatre dispositifs :
 
 - **Fonctionnalités par défaut** : trois fonctionnalités – recherche web, génération d'images et interpréteur de code – peuvent/doivent être paramétrés via le back-office ; 
-- **Outils** : scripts python pouvant être configurés globalement ou individuellement (voire configurés globalement et paramétrés individuellement) ;
-- **Serveurs externes** (MCP notamment) : peuvent être configurés globalement ou localement ;
+- **Outils** : scripts python pouvant être configurés globalement ou individuellement (ou configurés globalement et paramétrés individuellement) ;
+- **Serveurs externes** (MCP notamment) : peuvent être configurés globalement (côté admin) ou localement (côté utilisateur) ;
 - **Fonctions** : permettent notamment de configurer des pipelines complètes ou de filtrer/modifier automatiquement les requêtes et réponses.    
 
 Les  fonctions servent à modifier le pipeline de chat lui-même (filtrage automatique des requêtes/réponses, création de nouveaux modèles...). Les besoins prioritaires du projet (BDD, Excel, QGIS) pouvant déjà être couverts par les serveurs externes et les outils, ce dispositif n'a pas été étudié dans le détail.
@@ -127,7 +127,7 @@ Deux fonctionnalités par défaut entrent dans le champs de l'étude, la recherc
 
 Pour répondre aux besoins identifiés, il s'agira ainsi de choisir entre un outil, un serveur externe partagé ou un serveur externe local.
 
-| **Dispositif** | **Auteur** | **Origine des appels** | **Type de connexion** |
+| **Dispositif** | **Configurateur** | **Origine des appels** | **Type de connexion** |
 | --- | --- | ---- | --------- |
 | Outil | Admin ou user | Serveur | *Aucune (logique interne au code)* | 
 | Serveur global | Admin | Serveur | OpenAPI ou StreamableHTTP (MCP natif) |
@@ -169,6 +169,8 @@ De la même manière, **mcpo** peut être installé de manière permanente via `
 
 Dans le cas d'un MCP devant tourner sur un PC utilisateur, le lancement peut se faire via une ligne de commande. Un geste manuel qui pourrait être remplacé par une tâche planifiée au démarrage/à l'ouverture de session ou par un service Windows (par exemple NSSM/WinSW encapsulant la commande `uvx`).
 
+Dans ce projet, une installation temporaire via `uvx` a été choisie.
+
 #### Docker et localhost
 
 Enfin, si OpenWebUI est installé dans Docker, il faut noter que l'adresse http://localhost pointe vers son conteneur. Dans le cas d'un serveur configuré globalement, l'appel est lancé depuis le conteneur (et non pas du navigateur). Si le serveur où se trouve Docker doit être joint, il faudra utiliser l'adresse http://host.docker.internal. 
@@ -188,15 +190,15 @@ Cette section rend compte des dispositifs sélectionnés par chaque besoin. Si u
 
 **Cas d'usage** : 
 
-CU1 (connaissance des données Audiar) et CU2 (extraction de données en base)
+CU1 (connaissance des données Audiar), CU2 (extraction de données en base) et CU4 (édition de tables, enrichissement et classifications)
 
 **Décision** : 
 
-Outil / connexion à sandbox avec compte utilisateur. Documentation dans `outils-openwebui/explorateur-postgres/readme.md`. 
+Outil / connexion à sandbox avec compte utilisateur. Documentation dans `outils-openwebui/explorateur-postgres/README.md`. 
 
 **Justification** :
 
-Deux bases étaient candidates : bdsig (en lecture seule) et sandbox (accès en écriture dans son schéma individuel). Plusieurs approches ont été envisagées : 
+Deux bases étaient candidates : bdsig (en lecture seule) et sandbox (accès en écriture dans son schéma individuel). Plusieurs approches ont été envisagées : 
 
 - serveur MCP configuré globalement avec compte IA / bdsig
 - serveur MCP configuré globalement avec compte utilisateur / bdsig ou sandbox
@@ -227,41 +229,54 @@ CU5 (géomatique et cartographie)
 
 **Décision** : 
 
-MCP QGIS [nkarasiak/qgis-mcp](https://github.com/nkarasiak/qgis-mcp). Documentation dans `servers/mcp-qgis/README.md`. 
+MCP QGIS [nkarasiak/qgis-mcp](https://github.com/nkarasiak/qgis-mcp). Documentation dans `docs/guides.md`, section « MCP QGIS (serveur externe) ». 
 
 **Justification** :
 
-Vu les usages actuels – avec QGIS comme principal logiciel – et les besoins identifiés, la comparaison a porté sur des dispositifs permettant d'utiliser QGIS en session ouverte, afin de permettre un usage hybride, à la fois manuel et IA. Deux MCP benchmarkés offrent cette possibilité. Le MCP nkarasiak/qgis-mcp a été retenu pour ses capacités étendues (plus de 100 outils contre environ 15 pour l'implémentation d'origine jjsantos01/qgis_mcp). 
+Vu les usages actuels – avec QGIS comme principal logiciel – et les besoins identifiés, la comparaison a porté sur des dispositifs permettant d'utiliser QGIS en session ouverte, afin de permettre un usage hybride, à la fois manuel et IA. Deux MCP benchmarkés offrent cette possibilité. Le MCP nkarasiak/qgis-mcp a été retenu pour ses capacités étendues (plus de 100 outils contre environ 15 pour l'implémentation d'origine jjsantos01/qgis_mcp).
 
 
 ### Utilisation d'Excel
+**Cas d'usage** : 
 
-#### Décision
-- **mcp-excel** : [haris-musa/excel-mcp-server](https://github.com/haris-musa/excel-mcp-server) — le plus populaire et actif des deux candidats évalués, ne nécessite pas Excel installé. Pas encore de dossier `servers/mcp-excel/` créé à ce stade (serveur pas encore mis en place). **Décision (22/07/2026)** : exposé via Open WebUI/`mcpo`, comme les autres serveurs MCP métier du projet — priorité donnée au regroupement du plus grand nombre de cas d'usage dans un seul outil plutôt qu'à la dispersion entre plusieurs interfaces. Le cas d'usage 3 de `docs/sources/2026_analyse-fonctionnelle_V1.txt` recommandait un contrôle pas à pas via une extension applicative ou Claude Desktop plutôt qu'Open WebUI pour ce cas précis (risque : erreurs dans les formules générées, perte de maîtrise si l'utilisateur ne comprend pas le traitement produit) — ce point de vigilance reste valable en usage (vérification des résultats à prévoir) mais ne remet pas en cause le choix de passer par Open WebUI. Voir aussi « Point de vigilance : mode hybride pour mcp-excel » ci-dessous.
+CU3 (manipulation Excel et traitements de données assistés)
 
-#### Point de vigilance : mode hybride pour mcp-excel (voir les modifications dans le fichier ouvert par l'utilisateur)
+**Décision** :
 
-**Pas encore tranché (identifié le 22/07/2026)**. Par analogie avec le mode hybride retenu pour `mcp-qgis` (agir sur le projet ouvert à l'écran, cf. `servers/mcp-qgis/README.md`), un besoin équivalent est identifié pour Excel : pouvoir vérifier rapidement les modifications faites par l'IA sur un fichier que le chargé d'études a déjà ouvert, sans devoir le télécharger/rouvrir/comparer manuellement avec l'original — à la fois pour le contrôle (cas d'usage 3, risque documenté d'erreurs dans les formules générées) et pour l'ergonomie (gain de temps de vérification).
+**Justification** :
 
-**Cadrage retenu** : les fichiers Excel concernés sont des fichiers **locaux**, sur le poste Windows de chaque chargé d'études — pas des fichiers hébergés sur OneDrive/SharePoint. La piste d'une co-édition via Microsoft Graph API (fichier en ligne, co-édition native Excel) est donc écartée d'emblée pour ce prototype, cohérente avec la contrainte de souveraineté déjà notée pour les données sensibles (cas d'usage 3 : « solution souveraine, OVH Cloud/RAGaRenn »).
+Un usage hybride étant attendu (utilisation de l'IA s'ajoute à l'utilisation des outils) et le contrôle des résultats produits étant un enjeu important, la comparaison a notamment porté sur la capacité des outils à interagir en direct dans les documents ouverts par les utilisateurs. 
 
-Deux familles d'approches en présence, pas encore arbitrées — comparatif détaillé à mener dans `benchmark-techno.md`, section « mcp-excel — mode hybride » :
+À cet égard, il faut noter que : 
+- sous Windows, un fichier `.xlsx` ouvert dans Excel est verrouillé en écriture pour les autres processus ; une tentative d'écriture par openpyxl (ou toute bibliothèque équivalente manipulant le fichier directement) échoue avec `PermissionError` (`WinError 32`) tant que le fichier reste ouvert. Ainsi, les MCP de `haris-musa` et `guillehr2` ne peuvent pas offrir de mode hybride par construction, seule une lecture seule (`read_only=True`) reste possible fichier ouvert, jamais l'écriture.
+- ce fonctionnement n'est possible qu'avec le MCP tournant sur la machine de l'utilisateur — approche COM/OLE (`sbroenne`, `negokaz` en mode "Live editing") —, pas de manière centralisée, qui ne permet que l'approche fichier (`haris-musa`, `negokaz` en mode normal, `guillehr2`).
 
-- **Édition live via automatisation Windows (COM/OLE)** — pilote la session Excel réellement ouverte par l'utilisateur, modifications visibles immédiatement, sur le même principe que le mode hybride QGIS. `negokaz/excel-mcp-server` (deuxième candidat déjà évalué, voir `benchmark-techno.md`) propose une fonctionnalité **« Live editing » + capture d'écran, Windows uniquement, via un backend OLE** — piste la plus directement comparable. `sbroenne/mcp-server-excel` (jusqu'ici écarté du comparatif pour une raison à corriger, voir `benchmark-techno.md`) repose sur le même principe via l'API COM complète. Risque à surveiller, déjà rencontré sur QGIS : les outils structurés basés sur un pilotage live peuvent être moins fiables qu'un outil de fichier direct, avec un rebond possible sur de l'exécution de code brut (cf. `servers/mcp-qgis/README.md`, section « Points de vigilance »).
-- **Écriture directe du fichier (openpyxl) + restitution facilitant la vérification** — approche des candidats actuellement priorisés (`haris-musa`, `guillehr2`), sans lien avec une session Excel ouverte. Plus robuste a priori (pas de dépendance à l'automatisation d'une application), mais deux limites à vérifier concrètement : (1) un fichier ouvert dans Excel est en général verrouillé en écriture sous Windows — à confirmer si cela bloque l'écriture par l'outil tant que le fichier reste ouvert, ce qui reproduirait la friction qu'on cherche à éviter ; (2) sans mode live, la vérification devrait passer par un mécanisme de substitution (changelog des cellules modifiées, surlignage) plutôt que par une vue directe du fichier ouvert.
+Les fichiers Excel concernés sont des fichiers locaux, sur le poste Windows de chaque chargé d'études. La piste d'une co-édition via Microsoft Graph API (fichier en ligne, co-édition native Excel) est donc écartée d'emblée pour ce prototype.
+
 
 ### Recherche sur le web
 
+**Cas d'usage** : 
+
+CU4 (édition de tables, enrichissement et classifications) et usages hors projet
+
+**Décision** :
+
+**Justification** :
+
 ### Accès aux fichiers locaux
 
-- **mcp-filesystem** : implémentation de référence officielle [modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem) — la plus pérenne des candidates recensées (maintenue par le MCP steering group/Anthropic). Détail : `servers/mcp-filesystem/README.md`. **Statut (20/07/2026) : reporté, pas de priorité dans le scope Open WebUI actuel.** Les cas d'usage 8/9 de `docs/sources/2026_analyse-fonctionnelle_V1.txt` (« mode projet », accès à l'ensemble des fichiers) visent VS Code + Cline, Claude Desktop ou un outil type Cowork open source — pas Open WebUI, cohérent avec la « Limite assumée » ci-dessus sur le mode projet d'Open WebUI. `mcp-filesystem` n'a donc de sens que si un outil « mode projet » distinct d'Open WebUI est un jour retenu pour ce scope. (Ne concerne que l'accès fichiers générique — voir `mcp-excel` ci-dessous pour le cas Excel, qui suit un raisonnement différent.)
+**Cas d'usage** :
+
+**Décision** :
+
+**Justification** :
 
 
 
 
 
-### Schéma déploiement
-Pour une vue *où chaque serveur MCP tourne physiquement* (poste agent vs serveur Docker centralisé), voir `schema-deploiement-prod.md` (même dossier).
+
 
 
 

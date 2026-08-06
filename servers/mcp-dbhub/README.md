@@ -1,25 +1,25 @@
-# mcp-dbhub
+# mcp-dbhub (abandonné)
 
-Serveur MCP PostgreSQL candidat, **en test en phase 1** (poste individuel, identifiants
+**Abandonné le 03/08/2026** : remplacé par un outil Python natif Open WebUI, retenu pour l'accès à la base de données plutôt qu'un serveur MCP dédié (`mcp-dbhub` comme `mcp-postgres`) — voir `outils-openwebui/explorateur-postgres/README.md` pour la solution actuelle et `docs/architecture/decisions.md`, section "Accès à la base de données", pour la justification complète (dbhub exclu en particulier pour ses limites d'intégration mcpo/Windows). Contenu ci-dessous conservé pour mémoire (contexte de l'essai MCP), sans actualité opérationnelle.
+
+Serveur MCP PostgreSQL candidat, **en test** (poste individuel, identifiants
 personnels) — comparé à `crystaldba/postgres-mcp` (déjà en place, `servers/mcp-postgres/`).
-Voir `docs/architecture/decisions.md`, section "Modèle de déploiement de mcp-postgres : plan en
-3 phases", pour le cadrage complet, et `docs/architecture/benchmark-techno.md`, section `mcp-postgres`,
+Voir `docs/architecture/benchmark-techno.md`, section `mcp-postgres`,
 pour l'alerte sur l'état de maintenance de `crystaldba` qui motive cette comparaison.
 
-## Statut (24/07/2026) : test en cours, comparaison pas encore tranchée
+## Statut (24/07/2026) : test en cours, comparaison pas encore tranchée — voir décision d'abandon ci-dessus (03/08/2026)
 
-Les deux serveurs (`mcp-postgres` et `mcp-dbhub`) restent actifs en parallèle pour comparaison.
-Ne pas désactiver l'un des deux avant que Charlotte ait tranché.
+Les deux serveurs (`mcp-postgres` et `mcp-dbhub`) restent actifs en parallèle pour comparaison et sont comparés avec un outil python.
 
 ## Pourquoi `stdio` + `mcpo`, pas le HTTP natif de dbhub
 
 dbhub supporte aussi un transport HTTP natif (`--transport http`, endpoint `/mcp`), qui
-correspondrait au type "MCP (Streamable HTTP)" natif d'Open WebUI, sans passer par `mcpo`. Non
-retenu ici : ce mode natif n'est connectable que côté **Admin Settings → External Tools**
+correspondrait au type **MCP (Streamable HTTP)** natif d'Open WebUI, sans passer par `mcpo`. Non
+retenu ici : ce mode natif n'est connectable que côté **Admin Settings** → **External Tools**
 (chemin "Global", confirmé sur docs.openwebui.com le 24/07/2026) — pas de chemin "Direct"
-personnel pour du MCP natif, seulement pour de l'OpenAPI. Or la phase 1 (voir `decisions.md`)
+personnel pour du MCP natif, seulement pour de l'OpenAPI. Or ce montage par poste
 suppose que chaque chargé d'études connecte son **propre** serveur MCP avec son **propre**
-compte Postgres, via *Réglages personnels → Intégrations → Gérer les serveurs d'outils* — donc
+compte Postgres, via **Réglages** personnels → **Intégrations** → **Gérer les serveurs d'outils** — donc
 le chemin "Direct", qui n'existe que pour l'OpenAPI. D'où le choix de faire tourner dbhub en
 `--transport stdio`, exposé en OpenAPI par `mcpo` — exactement le même montage que
 `mcp-qgis`/`mcp-postgres`.
@@ -35,14 +35,14 @@ le chemin "Direct", qui n'existe que pour l'OpenAPI. D'où le choix de faire tou
   `uv`/`uvx` des autres serveurs MCP du projet.
 - `mcpo --port 8003 --api-key ...` — port choisi pour ne pas entrer en conflit avec `mcp-qgis`
   (8001) et `mcp-postgres` (8002).
-- Connexion côté Open WebUI : *Réglages personnels → Intégrations → Gérer les serveurs
-  d'outils* → Type **OpenAPI** → URL `http://localhost:8003` → Auth **Bearer**, même clé que
+- Connexion côté Open WebUI : **Réglages** personnels → **Intégrations** → **Gérer les serveurs
+  d'outils** → Type **OpenAPI** → URL `http://localhost:8003` → Auth **Bearer**, même clé que
   `--api-key` (`MCPO_API_KEY_DBHUB`) — identique au montage `mcp-postgres`.
 
 ## Dépendance runtime : Node.js, à peser dans la comparaison
 
-`dbhub` exige Node.js ≥ 22.5 sur **chaque poste** où il tourne (phase 1 = un poste par chargé
-d'études, cf. `decisions.md`) — contrairement à `crystaldba/postgres-mcp`, qui réutilise `uv`/
+`dbhub` exige Node.js ≥ 22.5 sur **chaque poste** où il tourne (un poste par chargé
+d'études) — contrairement à `crystaldba/postgres-mcp`, qui réutilise `uv`/
 `uvx` déjà exigé pour `mcp-qgis` et n'ajoute donc rien. À 15 postes non-développeurs, c'est un
 vrai coût de déploiement/support, pas un détail — voir `docs/architecture/benchmark-techno.md`,
 section `mcp-postgres`, "dépendance runtime par candidat". Point à trancher explicitement dans

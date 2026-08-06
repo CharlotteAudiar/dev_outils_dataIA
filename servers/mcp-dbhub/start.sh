@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Lance mcp-dbhub (bytebase/dbhub) via mcpo — phase 1 (poste individuel, identifiants
-# personnels), en comparaison avec mcp-postgres (crystaldba/postgres-mcp) — voir README.md et
-# docs/architecture/decisions.md, section "Modèle de déploiement de mcp-postgres : plan en
-# 3 phases". Statut (24/07/2026) : test en cours, comparaison pas encore tranchée.
+# Lance mcp-dbhub (bytebase/dbhub) via mcpo (poste individuel, identifiants
+# personnels), en comparaison avec mcp-postgres (crystaldba/postgres-mcp) — voir README.md.
+# Statut (24/07/2026) : test en cours, comparaison pas encore tranchée.
 
 ## Variables d'environnement requises : DATABASE_URI, MCPO_API_KEY_DBHUB (voir config/.env.example
 ## — DATABASE_URI est la même variable que pour mcp-postgres, donc le même compte personnel)

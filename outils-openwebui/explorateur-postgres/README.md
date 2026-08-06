@@ -20,10 +20,7 @@ de schéma prête à l'emploi, analyse de plans d'exécution pour `crystaldba`) 
 supplémentaire dans ce contexte précis. D'où l'idée de tester un Tool natif, plus simple à faire
 tourner (aucun processus externe, aucune supervision à mettre en place).
 
-**Statut (24/07/2026)** : testé et fonctionnel chez Charlotte. Comparaison avec les MCP dédiés
-**pas encore tranchée** pour l'ensemble des cas d'usage — ce README documente uniquement la
-construction et le fonctionnement de cet outil, pas une décision d'architecture actée (voir
-`docs/architecture/decisions.md`/`benchmark-techno.md`, non modifiés par ce test).
+**Statut (03/08/2026)** : testé et fonctionnel chez Charlotte. Préféré aux MCP.
 
 ## Fonctions exposées
 
@@ -35,14 +32,14 @@ construction et le fonctionnement de cet outil, pas une décision d'architecture
 
 ## Installation dans Open WebUI
 
-1. Workspace → Outils → New Tool → coller le contenu de `tool.py` → sauvegarder.
+1. **Espaces de travail** → **Outils** → **New Tool** → coller le contenu de `tool.py` → sauvegarder.
    `psycopg2-binary` s'installe automatiquement (ligne `requirements:` du docstring d'en-tête).
-2. Chaque utilisateur renseigne ses identifiants personnels dans Réglages personnels → Outils →
+2. Chaque utilisateur renseigne ses identifiants personnels dans **Réglages** personnels → **Outils** →
    "Explorateur Postgres (sandbox Audiar)" :
    - `pg_user` / `pg_password` : compte Postgres personnel (obligatoire).
    - `pg_host` / `pg_port` / `pg_database` : pré-remplis pour `perceval2.audiar.net:5432/sandbox`,
      modifiables si besoin d'une autre cible.
-3. Activer l'outil sur le modèle utilisé (fiche du modèle → onglet "Outils").
+3. Activer l'outil sur le modèle utilisé (fiche du modèle → onglet **Outils**).
 
 ## Limites connues
 

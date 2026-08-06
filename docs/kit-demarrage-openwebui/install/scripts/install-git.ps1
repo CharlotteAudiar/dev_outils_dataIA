@@ -1,4 +1,4 @@
-# Installe Git (requis par les commandes `uvx --from git+...` qui clonent les serveurs MCP
+﻿# Installe Git (requis par les commandes `uvx --from git+...` qui clonent les serveurs MCP
 # tiers hébergés sur GitHub, ex. qgis-mcp), s'il n'est pas déjà présent. Méthode retenue :
 # winget (déjà intégré à Windows 10/11) - voir docs/guides.md pour le détail.
 

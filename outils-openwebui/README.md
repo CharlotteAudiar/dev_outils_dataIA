@@ -20,8 +20,7 @@ données — c'est le cas retenu pour `postgres-explorer`, voir son README).
 
 ## Anatomie d'un Tool
 
-Un Tool est un unique fichier Python, collé tel quel dans Open WebUI (Workspace → Outils → New
-Tool). Structure attendue :
+Un Tool est un unique fichier Python, collé tel quel dans Open WebUI (**Espaces de travail** → **Outils** → **New Tool**). Structure attendue :
 
 ```python
 """
@@ -77,11 +76,11 @@ Points importants, vérifiés en pratique le 24/07/2026 (`postgres-explorer`) :
 
 ## Déploiement / test
 
-1. Workspace → Outils → New Tool, coller le script, sauvegarder (le nom/la description du
+1. **Espaces de travail** → **Outils** → **New Tool**, coller le script, sauvegarder (le nom/la description du
    docstring d'en-tête apparaissent dans la liste).
-2. Si une classe `UserValves` est définie : chaque utilisateur va dans ses Réglages personnels →
-   Outils → (nom de l'outil) pour renseigner ses propres valeurs (ex. identifiants personnels).
-3. Activer l'outil sur le modèle utilisé : fiche du modèle → onglet "Outils" → cocher l'outil.
+2. Si une classe `UserValves` est définie : chaque utilisateur va dans ses **Réglages** personnels →
+   **Outils** → (nom de l'outil) pour renseigner ses propres valeurs (ex. identifiants personnels).
+3. Activer l'outil sur le modèle utilisé : fiche du modèle → onglet **Outils** → cocher l'outil.
    Sans cette étape, l'outil existe mais n'est jamais proposé en conversation.
 4. Debug : les `print()` dans le code apparaissent dans les logs serveur d'Open WebUI (pas dans le
    chat) ; toute chaîne retournée par une fonction est en revanche visible du modèle/utilisateur —
