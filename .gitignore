@@ -1,7 +1,6 @@
 # Dossiers exclus et fichiers exclus
 
 draft/
-old/
 *.pdf
 
 # Variables d'environnement
