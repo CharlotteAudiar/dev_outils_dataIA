@@ -46,7 +46,7 @@ Le détail sur les cas d'usages (CU) peut être consulté dans l'analyse fonctio
 
 | Composant | Cas d'usage | Outil retenu | Statut (03/08/2026) | Détail |
 |-----|----|------|------|--------|
-| Solution d'orchestration | CU1 à CU7 | **Open WebUI** | Prototype local et Merlin créés  | Section « Solution d'orchestration » ci-dessous |
+| Solution d'orchestration | CU1 à CU7 | Open WebUI v0.10.2 | Prototype local et Merlin créés  | Section « Solution d'orchestration » ci-dessous |
 | Accès base de données | CU1, CU2 et CU4 | outil python | Monté sur Merlin, à optimiser | outils-openwebui/explorateur-postgres/README.md |
 | Utilisation QGIS | CU5 | MCP local [nkarasiak/qgis-mcp](https://github.com/nkarasiak/qgis-mcp) | Configuré sur Merlin, en test | `docs/guides.md`, section « MCP QGIS (serveur externe) » |
 | Utilisation Excel | CU3 et CU4 | MCP [haris-musa/excel-mcp-server](https://github.com/haris-musa/excel-mcp-server) | À monter sur prototype local  |  |
@@ -87,7 +87,7 @@ Ce choix n'exclut pas le besoin de mode projet identifié pour les cas d'usage 8
 
 **Décision** : 
 
-Open WebUI (https://openwebui.com/)
+Open WebUI (https://openwebui.com/). v0.10.2 installée le 27/07/2026 sur Merlin.
 
 **Justification** :
 
