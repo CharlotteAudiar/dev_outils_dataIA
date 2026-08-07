@@ -1,19 +1,19 @@
 # mcp-postgres (abandonné)
 
-**Abandonné le 03/08/2026** : remplacé par un outil Python natif Open WebUI, retenu pour l'accès à la base de données plutôt qu'un serveur MCP dédié — voir `outils-openwebui/explorateur-postgres/README.md` pour la solution actuelle et `docs/architecture/decisions.md`, section "Accès à la base de données", pour la justification complète. Contenu ci-dessous conservé pour mémoire (contexte de l'essai MCP), sans actualité opérationnelle.
+**Abandonné le 03/08/2026** : remplacé par un outil Python natif Open WebUI, retenu pour l'accès à la base de données plutôt qu'un serveur MCP dédié — voir `fonctionnalites/exploration-bd/README.md` pour la solution actuelle et `decisions.md`, section "Accès à la base de données", pour la justification complète. Contenu ci-dessous conservé pour mémoire (contexte de l'essai MCP), sans actualité opérationnelle.
 
 Serveur MCP pour interroger la base de données PostgreSQL (cas d'usage 2 de l'analyse fonctionnelle : "extraction de données depuis une table en base").
 Neutre : servable à n'importe quel client MCP.
 
 ## Implémentation testée (20/07/2026)
 
-**[crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp)** ("Postgres MCP Pro") — retenu plutôt que l'ancienne implémentation de référence Anthropic (archivée, faille d'injection SQL documentée). Voir `docs/architecture/benchmark-techno.md` pour le comparatif complet.
+**[crystaldba/postgres-mcp](https://github.com/crystaldba/postgres-mcp)** ("Postgres MCP Pro") — retenu plutôt que l'ancienne implémentation de référence Anthropic (archivée, faille d'injection SQL documentée). Voir `benchmark-techno.md` pour le comparatif complet.
 
 Fonctionnalités au-delà de la simple exécution SQL : santé de la base (index, cache, vacuum...), plans d'exécution (`EXPLAIN`), recommandations d'index. Utilise `psycopg3`/`libpq` pour la connexion.
 
 ## Montage technique (même logique que `mcp-qgis`)
 
-Comme pour QGIS, le serveur est exposé à Open WebUI via `mcpo` (proxy MCP stdio → OpenAPI) — voir `docs/architecture/decisions.md`, section "Connexion des serveurs MCP à Open WebUI : pourquoi `mcpo`", pour la justification détaillée de ce choix (pas de MCP natif direct dans Open WebUI en pratique).
+Comme pour QGIS, le serveur est exposé à Open WebUI via `mcpo` (proxy MCP stdio → OpenAPI) — voir `plateforme/mecanismes-extension.md`, section « OpenAPI vs StreamableHTTP », pour la justification détaillée de ce choix (pas de MCP natif direct dans Open WebUI en pratique).
 
 **Commande de lancement** — packagée dans `start.sh` (même dossier) :
 ```

@@ -19,7 +19,7 @@ Installation Open WebUI et outils
 
 Guide d'installation et d'utilisation d'Open WebUI (v0.10.2) sur le serveur interne mutualisé Merlin. Il documente notamment la création et le paramétrage d'Open WebUI, ses fonctionnalités, la gestion des droits, la gestion de la mémoire.
 
-Les différents choix opérés sont documentés dans `docs/architecture/decisions.md`.
+Les différents choix opérés sont documentés dans `decisions.md`.
 
 ## Installer Open WebUI
 
@@ -75,7 +75,7 @@ Le numéro de version est aussi indiqué dans le menu **A propos** du panneau **
 
 ## Paramétrer les connexions et les modèles
 
-Les fournisseurs de modèles LLM par API — Mistral, RAGaRenn, OVHcloud AI Endpoints, catalogue comparé dans `docs/benchmark-modeles.md` — se connectent via le protocole **OpenAI-compatible**, nativement supporté par Open WebUI.
+Les fournisseurs de modèles LLM par API — Mistral, RAGaRenn, OVHcloud AI Endpoints, catalogue comparé dans `benchmark-modeles.md` — se connectent via le protocole **OpenAI-compatible**, nativement supporté par Open WebUI.
 
 
 ### Configurer une connexion au modèle (API)
@@ -196,7 +196,7 @@ Les autres comptes admin (créés après le premier) n'ont pas cette protection�
 
 ### Gestion des utilisateurs et des groupes
 
-Deux possibilités pour ajouter des utilisateurs : manuellement ou via un fichier csv, selon un modèle fixe (voir `docs/user-import.example.csv`).
+Deux possibilités pour ajouter des utilisateurs : manuellement ou via un fichier csv, selon un modèle fixe (voir `plateforme/gabarits/user-import.example.csv`).
 
 Concernant la création via un fichier csv, il faut noter qu'il ne permet pas une gestion globale : 
 

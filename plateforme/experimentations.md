@@ -24,7 +24,7 @@ Afin de ne pas surcharger la mémoire d'Open WebUI sur Merlin, les expérimentat
 
 ## Installation d'Open WebUI
 
-Framework retenu : voir `docs/architecture/decisions.md`. Ce guide décrit le premier déploiement, en local sur un poste Windows, avant l'hébergement partagé sur Merlin (ci-dessous).
+Framework retenu : voir `decisions.md`. Ce guide décrit le premier déploiement, en local sur un poste Windows, avant l'hébergement partagé sur Merlin (ci-dessous).
 
 **Prérequis**
 
@@ -80,4 +80,4 @@ docker start open-webui # Open WebUI lancé en arrière-plan
 **`execute_code` (observé le 20/07/2026, testé par Charlotte)** : cet outil (catégorie "System") accepte du code Python/PyQGIS arbitraire en paramètre, contrairement aux ~101 autres outils qui ont des paramètres contraints (`layer_id`, `expression`, etc.). Le modèle l'utilise spontanément en solution de repli quand un outil structuré échoue (observé sur un algorithme `execute_processing` mal paramétré par le modèle lui-même). Ce n'est pas un contournement du MCP — `execute_code` est un outil MCP comme les autres, transmis par la même chaîne (`mcpo` → `qgis-mcp-server` → plugin) — mais sa portée fonctionnelle est bien plus large (accès quasi illimité à ce que le processus QGIS peut faire) et sa traçabilité plus faible (un bloc de code est moins facile à auditer qu'un appel structuré).
 Deux mécanismes de filtrage existent, tous deux réels et documentés en amont mais non retranchés ici :
   - la **Function Name Filter List** d'Open WebUI, documentée pour les connexions MCP natives (streamable-http) — non confirmée pour une connexion OpenAPI comme la nôtre via `mcpo` (cf. `docs.openwebui.com/features/extensibility/mcp`) ;
-  - le mode **`mcpo --config` + `disabledTools`**, qui filtre en amont d'Open WebUI (cf. `docs/architecture/decisions.md`, section "Mode `--config` de `mcpo`") — **testé le 21/07/2026** via `servers/mcp-qgis/mcpo-config.json`, puis **annulé le 22/07/2026** (retour au mode inline, une instance `mcpo` = un serveur = un port ; fichier supprimé). Capacité disponible et documentée par `mcpo` lui-même, mais non adoptée pour l'instant.
+  - le mode **`mcpo --config` + `disabledTools`**, qui filtre en amont d'Open WebUI (cf. `plateforme/mecanismes-extension.md`, section « Options MCPO ») — **testé le 21/07/2026** via `servers/mcp-qgis/mcpo-config.json`, puis **annulé le 22/07/2026** (retour au mode inline, une instance `mcpo` = un serveur = un port ; fichier supprimé). Capacité disponible et documentée par `mcpo` lui-même, mais non adoptée pour l'instant.

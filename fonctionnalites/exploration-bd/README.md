@@ -6,7 +6,7 @@ méthodologie générale de construction d'un Tool Open WebUI.
 
 ## Pourquoi (contexte, 24/07/2026)
 
-Testé en alternative à `servers/mcp-postgres/` (crystaldba) et `servers/mcp-dbhub/` (bytebase),
+Testé en alternative à `old/mcp-postgres/` (crystaldba) et `old/mcp-dbhub/` (bytebase),
 après un blocage sur `mcp-dbhub` : `mcpo` n'arrivait pas à spawner correctement `npx`/`node` sur
 Windows (fragilité `cmd.exe`/`.cmd`/héritage de handles, cf. historique de la session
 `mcp-dbhub`). Ça a amené à se demander si un serveur MCP était réellement nécessaire pour ce cas
@@ -42,7 +42,7 @@ Les méthodes exposées sont en `async def` mais délèguent le travail Postgres
 
 ## Installation dans Open WebUI
 
-1. **Espaces de travail** → **Outils** → **New Tool** → coller le contenu de `tool.py` → sauvegarder.
+1. **Espaces de travail** → **Outils** → **New Tool** → coller le contenu de `exploration-bd.py` → sauvegarder.
    `psycopg2-binary` s'installe automatiquement (ligne `requirements:` du docstring d'en-tête).
 2. Chaque utilisateur renseigne ses identifiants personnels dans **Réglages** personnels → **Outils** →
    "Explorateur Postgres (sandbox Audiar)" :

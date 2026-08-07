@@ -1,10 +1,10 @@
 # mcp-dbhub (abandonné)
 
-**Abandonné le 03/08/2026** : remplacé par un outil Python natif Open WebUI, retenu pour l'accès à la base de données plutôt qu'un serveur MCP dédié (`mcp-dbhub` comme `mcp-postgres`) — voir `outils-openwebui/explorateur-postgres/README.md` pour la solution actuelle et `docs/architecture/decisions.md`, section "Accès à la base de données", pour la justification complète (dbhub exclu en particulier pour ses limites d'intégration mcpo/Windows). Contenu ci-dessous conservé pour mémoire (contexte de l'essai MCP), sans actualité opérationnelle.
+**Abandonné le 03/08/2026** : remplacé par un outil Python natif Open WebUI, retenu pour l'accès à la base de données plutôt qu'un serveur MCP dédié (`mcp-dbhub` comme `mcp-postgres`) — voir `fonctionnalites/exploration-bd/README.md` pour la solution actuelle et `decisions.md`, section "Accès à la base de données", pour la justification complète (dbhub exclu en particulier pour ses limites d'intégration mcpo/Windows). Contenu ci-dessous conservé pour mémoire (contexte de l'essai MCP), sans actualité opérationnelle.
 
 Serveur MCP PostgreSQL candidat, **en test** (poste individuel, identifiants
 personnels) — comparé à `crystaldba/postgres-mcp` (déjà en place, `servers/mcp-postgres/`).
-Voir `docs/architecture/benchmark-techno.md`, section `mcp-postgres`,
+Voir `benchmark-techno.md`, section `mcp-postgres`,
 pour l'alerte sur l'état de maintenance de `crystaldba` qui motive cette comparaison.
 
 ## Statut (24/07/2026) : test en cours, comparaison pas encore tranchée — voir décision d'abandon ci-dessus (03/08/2026)
@@ -44,7 +44,7 @@ le chemin "Direct", qui n'existe que pour l'OpenAPI. D'où le choix de faire tou
 `dbhub` exige Node.js ≥ 22.5 sur **chaque poste** où il tourne (un poste par chargé
 d'études) — contrairement à `crystaldba/postgres-mcp`, qui réutilise `uv`/
 `uvx` déjà exigé pour `mcp-qgis` et n'ajoute donc rien. À 15 postes non-développeurs, c'est un
-vrai coût de déploiement/support, pas un détail — voir `docs/architecture/benchmark-techno.md`,
+vrai coût de déploiement/support, pas un détail — voir `benchmark-techno.md`,
 section `mcp-postgres`, "dépendance runtime par candidat". Point à trancher explicitement dans
 la comparaison, pas seulement les fonctionnalités des deux serveurs.
 
@@ -73,7 +73,7 @@ reste une défense en profondeur, cohérente avec le mode restreint déjà reten
    `execute_sql` avec un `SELECT` ; tenter volontairement un `UPDATE`/`INSERT` pour confirmer
    que `readonly` le bloque.
 6. **Comparer** avec `mcp-postgres` (fiabilité, pertinence des réponses, facilité de connexion)
-   et reporter le résultat dans `docs/architecture/benchmark-techno.md`.
+   et reporter le résultat dans `benchmark-techno.md`.
 
 ## Prérequis restants avant de trancher la comparaison
 

@@ -1,6 +1,6 @@
 # Métadonnées géographiques, GeoNetwork et normes ISO — état des lieux et pistes d'outillage
 
-Document d'étude (non tranché) — rattaché au cas d'usage « base de données non documentée » évoqué dans `docs/architecture/decisions.md` (« bd pas encore documentée, étude métadonnées geonetwork à étudier »).
+Document d'étude (non tranché) — rattaché au cas d'usage « base de données non documentée » évoqué dans `decisions.md` (« bd pas encore documentée, étude métadonnées geonetwork à étudier »).
 
 **Objet** : établir ce que GeoNetwork exige comme métadonnées, comment il représente précisément les tables et leurs attributs, et par quels moyens alimenter ces fiches depuis les tables de description du projet (ou l'inverse).
 
@@ -210,7 +210,7 @@ Sources : [OGCWFSDescribeFeatureType-to-ISO19110.xsl — core-geonetwork (fichie
 
 ### 3.1 Point de départ : ce dont le projet dispose
 
-Le tool `openwebui-tools/postgres-explorer/tool.py` interroge déjà `information_schema.tables` (liste des tables) et `information_schema.columns` (nom, type, nullabilité), mais **ne récupère aucune description** — son README signale lui-même cette limite, à combler « sur le même principe qu'une requête `information_schema` supplémentaire ». Il n'introspecte pas non plus les clés étrangères.
+Le tool `fonctionnalites/exploration-bd/exploration-bd.py` interroge déjà `information_schema.tables` (liste des tables) et `information_schema.columns` (nom, type, nullabilité), mais **ne récupère aucune description** — son README signale lui-même cette limite, à combler « sur le même principe qu'une requête `information_schema` supplémentaire ». Il n'introspecte pas non plus les clés étrangères.
 
 PostgreSQL dispose pourtant nativement d'un mécanisme de description : `COMMENT ON TABLE` et `COMMENT ON COLUMN`, stockés dans le catalogue système `pg_description` et lisibles via `obj_description()` (table) et `col_description()` (colonne).
 

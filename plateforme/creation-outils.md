@@ -1,6 +1,6 @@
 # Créer un Tool Open WebUI
 
-Ce qu'il faut savoir pour écrire un Tool Open WebUI natif sans repartir de zéro. Le seul exemple en service à ce jour est l'outil d'exploration de la base (`fonctionnalites/exploration-bd/tool.py`), cité ici comme illustration.
+Ce qu'il faut savoir pour écrire un Tool Open WebUI natif sans repartir de zéro. Le seul exemple en service à ce jour est l'outil d'exploration de la base (`fonctionnalites/exploration-bd/exploration-bd.py`), cité ici comme illustration.
 
 Contenu vérifié le 24/07/2026 sur Open WebUI 0.10.2 : à relire à chaque montée de version.
 
