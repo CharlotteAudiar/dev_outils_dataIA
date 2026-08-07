@@ -53,3 +53,6 @@ Desktop.ini    # configuration dossiers Windows
 
 # Raccourcis Window
 *.lnk
+
+# Cache Claude
+.claude/
