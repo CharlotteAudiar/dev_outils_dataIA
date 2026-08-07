@@ -1,0 +1,7 @@
+Le **MCP crystaldba** a été testé dans le prototype local le 18/07/2026, avec un lancement `uvx`/`mcpo`, avant d'être exclu car non maintenu depuis plusieurs mois. 
+
+De nouveaux tests ont ciblés le **MCP dbhub** le 25/07/2026. Trois blocages ont été rencontrés avant d'obtenir une connexion `mcpo` → `dbhub` complète :
+
+- `mcpo` (Python) ne peut pas spawner `npx` directement sous Windows — `npx` est un script `.cmd`, pas un exécutable, et l'appel se fait sans passer par un shell (pas de résolution `PATHEXT`) ; le sous-processus ne démarre jamais, `mcpo` échoue avec `McpError: Connection closed` dès l'`initialize()`.
+- une fois `cmd /c` ajouté devant `npx`, Git Bash/MSYS convertit silencieusement l'argument `/c` en chemin Windows (`C:/`) avant de le transmettre — nécessite `cmd //c` (double slash) pour échapper cette conversion.
+- ces deux points corrigés, `dbhub` démarre réellement (bannière, connexion Postgres visible en test manuel isolé, hors `mcpo`) mais la session `mcpo` échoue encore avec le même `McpError: Connection closed`, cette fois après ~5s (le temps que `npx`/`dbhub` travaillent réellement). Non résolu à ce stade ; piste envisagée : un problème d'héritage des tuyaux stdio à travers la chaîne de processus imbriqués `cmd.exe → npx.cmd → node.exe`.

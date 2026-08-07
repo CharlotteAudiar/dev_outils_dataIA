@@ -1,3 +1,4 @@
+# v1 — installée dans Open WebUI le 27/08/2026 (Merlin)
 """
 title: Explorateur Postgres (sandbox Audiar)
 author: Charlotte

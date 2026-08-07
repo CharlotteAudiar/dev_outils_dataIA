@@ -157,15 +157,8 @@ Liens utiles :
 | **pgplex/pgconsole** | https://github.com/pgplex/pgconsole | Pas un serveur MCP mais une console SQL web self-hosted qui expose en plus un point d'accès MCP. 4 outils : lister connexions/objets, décrire une table, exécuter une requête bridée à 1000 lignes. Système de gestion des accès, limités par droits Postgres. Journal d'audit  | Jeune : ~120 ★, Apache 2.0, premières releases récentes, modèle de gouvernance le plus abouti du tableau selon Bytebase (comparatif indépendant, source ci-dessous). | npx ou Docker |
 | **bytebase/dbhub** | https://github.com/bytebase/dbhub | Serveur multi-bases (Postgres, MySQL, SQL Server, SQLite...) via une interface unique ; maintenu par Bytebase. Deux outils MCP principaux (`execute_sql`, `search_objects` avec divulgation progressive du schéma) pour limiter la consommation de contexte. Garde-fous intégrés : mode lecture seule, limite de lignes, timeout de requête, tunnel SSH et TLS. | ~2,9k ★, 242 forks, 513 commits, développement très actif, TypeScript, MIT. | Node.js ≥ 22.5 pour l'installation `npm`/`npx` ou Docker |
 
-#### Expérimentations
 
-Le **MCP crystaldba** a été testé dans le prototype local le 18/07/2026, avec un lancement `uvx`/`mcpo`, avant d'être exclu car non maintenu depuis plusieurs mois. 
 
-De nouveaux tests ont ciblés le **MCP dbhub** le 25/07/2026. Trois blocages ont été rencontrés avant d'obtenir une connexion `mcpo` → `dbhub` complète :
-
-- `mcpo` (Python) ne peut pas spawner `npx` directement sous Windows — `npx` est un script `.cmd`, pas un exécutable, et l'appel se fait sans passer par un shell (pas de résolution `PATHEXT`) ; le sous-processus ne démarre jamais, `mcpo` échoue avec `McpError: Connection closed` dès l'`initialize()`.
-- une fois `cmd /c` ajouté devant `npx`, Git Bash/MSYS convertit silencieusement l'argument `/c` en chemin Windows (`C:/`) avant de le transmettre — nécessite `cmd //c` (double slash) pour échapper cette conversion.
-- ces deux points corrigés, `dbhub` démarre réellement (bannière, connexion Postgres visible en test manuel isolé, hors `mcpo`) mais la session `mcpo` échoue encore avec le même `McpError: Connection closed`, cette fois après ~5s (le temps que `npx`/`dbhub` travaillent réellement). Non résolu à ce stade ; piste envisagée : un problème d'héritage des tuyaux stdio à travers la chaîne de processus imbriqués `cmd.exe → npx.cmd → node.exe`.
 
 
 
@@ -181,16 +174,6 @@ De nouveaux tests ont ciblés le **MCP dbhub** le 25/07/2026. Trois blocages ont
 
 Les MCP **kicker315/deepseek_qgis_mcp** (projet indépendant) et **syauqi-uqi/qgis_mcp_modify1** (fork personnel de jjsantos01) n'ont pas été étudiés en détail vu leur faible traction (nombre d'étoiles, de forks, de commits...).
 
-#### Expérimentations
-Des expérimentations ont été menées par Mathilde Plaire (chargée d'étude pôle environnement) avec le **MCP nkarasiak**, retenu pour le projet. Elle a rencontré plusieurs limites : 
-
-- timeout à 60 secondes, empêchant les opérations longues
-- difficultés du modèle à choisir les bonnes requêtes
-
-
-
-
-
 ### MCP Excel
 
 #### Tableau comparatif
@@ -202,8 +185,6 @@ Des expérimentations ont été menées par Mathilde Plaire (chargée d'étude p
 | **[negokaz/excel-mcp-server](https://github.com/negokaz/excel-mcp-server)** | 953 ★, 113 forks, développement à l'arrêt (dernière release le 19/07/2025) | Aucune en mode fichier ; Windows + Excel requis pour le mode « Live editing » | Serveur Node/Go multiplateforme, lancé en stdio via `npx`. Le mode « Live editing » impose une session Excel COM/OLE locale. | 7 outils : liste feuilles, lecture et écriture valeurs et formules, création feuilles et tableaux, copie feuille, mise en forme. Pas de graphiques, ni TCD, ni mise en forme conditionnelle, ni validation de données, ni VBA (un fork `vKenjo` les ajoute, non fusionné, 2 ★). | Oui en principe, via un backend COM dédié (`excel_ole.go`) qui pilote Excel au lieu d'écrire le fichier. Mentionné au README seulement, aucun retour d'usage trouvé. | Capacités nettement plus limitées que haris-musa pour l'usage courant. |
 | **[guillehr2/Excel-MCP-Server-Master](https://github.com/guillehr2/Excel-MCP-Server-Master)** | 33 ★, 16 forks, aucune release taguée, mainteneur unique | Aucune | Node, lancé en stdio via `npx`, mais installe au premier lancement des dépendances Python (fastmcp, openpyxl, pandas, numpy, matplotlib, xlsxwriter, xlrd, xlwt) : Node.js + Python requis. | Classeurs et feuilles, écriture de cellules et formules, tableaux avec mise en forme auto, graphiques (50+ styles), tableaux de bord combinant plusieurs graphiques, filtrage, import/export CSV/JSON/SQL/PDF. TCD annoncés dans description du projet, à vérifier. Mise en forme conditionnelle non identifiée. | Non : écrit directement le fichier `.xlsx`. | Écart entre fonctionnalités annoncées et outils réellement documentés (TCD) ; traction très faible et mainteneur unique. |
 | **[sbroenne/mcp-server-excel](https://github.com/sbroenne/mcp-server-excel)** | 185 ★, 32 forks, développement très actif (412 commits, 127 releases, v1.8.68 le 28/05/2026) | Oui : Windows + Excel 2016 ou supérieur installé (pilotage via l'API COM) | Exécutable natif `mcp-excel.exe` en stdio, à ajouter au PATH ; également distribué en extension VS Code et en paquet `.mcpb`. Ni Python ni Node requis. Une icône en barre système permet de suivre les sessions actives. | Classeurs et feuilles (dont déplacement entre classeurs), plages (valeurs, formules, mise en forme, validation, protection), tableaux, TCD, graphiques, mise en forme conditionnelle, macros VBA, Power Query et DAX, segments, plages nommées, connexions OLEDB/ODBC. | Pas en session ouverte mais visualisation des opérations en mode « Agent Mode ». | Stabilité automatisation COM à tester (deux rapports de bugs) ; accès VBA, OLEDB/ODBC Power Query ; options `formatMCode`/`formatDax` vers services tiers (ne jamais activer). |
-
-#### Expérimentations
 
 
 ### MCP Filesystem 

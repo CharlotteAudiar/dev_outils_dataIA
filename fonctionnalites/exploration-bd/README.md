@@ -30,6 +30,16 @@ tourner (aucun processus externe, aucune supervision à mettre en place).
   résultat. Aucun filtrage/validation du SQL côté outil (voir "Pourquoi" ci-dessus) — les droits
   réels sont ceux du compte Postgres de l'utilisateur.
 
+## Pourquoi `psycopg2-binary`
+
+`psycopg2` est la bibliothèque Python la plus utilisée pour parler à une base PostgreSQL : ouvrir une connexion (`psycopg2.connect(host=..., user=..., password=..., ...)`), envoyer des requêtes SQL (`cur.execute(sql)`), récupérer les résultats (`cur.fetchall()`/`fetchmany()`). C'est l'équivalent, côté Postgres, de ce qu'un driver JDBC est pour Java ou un driver ODBC pour Excel et Power BI.
+
+Deux variantes existent sur PyPI. `psycopg2` nécessite de compiler des dépendances C (`libpq`) sur la machine qui l'installe ; `psycopg2-binary` est précompilée. C'est cette seconde qui est déclarée dans la ligne `requirements:` du docstring, l'installation étant faite automatiquement par Open WebUI dans son conteneur. La documentation officielle déconseille `-binary` en production à grande échelle, au profit d'une compilation maîtrisée de `libpq` : non pertinent ici, avec un compte personnel et une faible volumétrie. Documentation : [psycopg.org/docs](https://www.psycopg.org/docs/).
+
+`psycopg2.extras.RealDictCursor`, utilisé dans `execute_query`, fait que chaque ligne de résultat est retournée comme un dictionnaire `{nom_colonne: valeur}` plutôt qu'un tuple positionnel — plus pratique pour reconstruire un texte avec les en-têtes de colonnes.
+
+Les méthodes exposées sont en `async def` mais délèguent le travail Postgres à des méthodes privées synchrones via `asyncio.to_thread(...)`, `psycopg2` étant une bibliothèque bloquante.
+
 ## Installation dans Open WebUI
 
 1. **Espaces de travail** → **Outils** → **New Tool** → coller le contenu de `tool.py` → sauvegarder.

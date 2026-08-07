@@ -5,7 +5,6 @@ draft/
 
 # Variables d'environnement
 .env
-servers/mcp-dbhub/dbhub.toml
 
 # Environnement virtuel
 .venv/
@@ -13,10 +12,9 @@ venv/
 
 # Config IA
 CLAUDE.local.md
-.cursor/mcp.json
 
 # Données utilisateurs réelles (garder seulement les .example)
-docs/user-import.csv
+**/user-import.csv
 
 # Cache python
 __pycache__/

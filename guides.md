@@ -47,7 +47,7 @@ Le premier lancement télécharge l'image (plusieurs centaines de Mo, peut prend
 
 **Étape 2 | Créer le compte admin**
 
-Ouvrir [http://srv-gitlab.audiar.net:8195](http://srv-gitlab.audiar.net:8195) dans un navigateur. Le premier compte créé devient automatiquement administrateur (son compte ne pourra pas être supprimé ni son rôle modié, voir ci-desous la section [Gestion des droits](#gestion-des-droits)). Choisir un email/mot de passe (peuvent être différents de ceux du poste).
+Ouvrir [http://srv-gitlab.audiar.net:8195](http://srv-gitlab.audiar.net:8195) dans un navigateur. Le premier compte créé devient automatiquement administrateur (son compte ne pourra pas être supprimé ni son rôle modifié, voir ci-desous la section [Gestion des droits](#gestion-des-droits)). Choisir un email/mot de passe (peuvent être différents de ceux du poste).
 
 **Étape 3 | Lancer Open WebUI**
 
@@ -253,7 +253,7 @@ L'ajout de fonctionnalités dans Open WebUI peut se faire via quatre dispositifs
 
 - **Fonctionnalités par défaut** : trois fonctionnalités – recherche web, génération d'images et interpréteur de code – peuvent/doivent être paramétrés via le back-office ; 
 - **Outils** : scripts python pouvant être configurés globalement ou individuellement (ou configurés globalement et paramétrés individuellement) ; modèle de script fourni à la création dans Open WebUI ;
-- **Serveurs externes** (MCP notamment) : peuvent être configurés globalement (côté admin, partagebles, appel depuis l'hôte) ou localement (côté utilisateur, non partageables, appel depuis le navigateur de l'utilisateur) ;
+- **Serveurs externes** (MCP notamment) : peuvent être configurés globalement (côté admin, partageables, OpenAPI ou StreamableHTTP, appel depuis le backend Open WebUI) ou localement (côté utilisateur, non partageables, OpenAPI uniquement, appel depuis le navigateur de l'utilisateur) ;
 - **Fonctions** : permettent notamment de configurer des pipelines complètes ou de filtrer/modifier automatiquement les requêtes et réponses.
 
 #### Des droits à gérer
@@ -261,9 +261,22 @@ Par défaut, les utilisateurs ont accès aux fonctionnalités par défaut (qui d
 
 Pour permettre aux utilisateurs d'utiliser les outils, d'en importer et/ou d'en exporter, un administrateur doit, dans les réglages des autorisations par défaut ou des autorisatins des groupes, cocher au choix **Accès aux outils**, **Importer les outils** et **Exporter les outils**. Pour être utilisé par un autre utilisateur que son auteur, ce dernier ou un administrateur doit aussi, dans **Espace de travail** → **Outils** → **Page outil** → **Accès**, indiquer les permissions et leur type (lecture ou lecture/écriture).
 
-Pour permettre aux utilisateurs d'installer et d'utiliser des serveurs externes locaux (voir la section [Gestion des droits](#gestion-des-droits)), un administrateur doit cocher **Serveurs d'outils directs**, dans **Autorisations des fonctionnalités**. Un serveur local n'est pas partageable.
+Pour permettre aux utilisateurs d'installer et d'utiliser des serveurs externes locaux (voir la section [Gestion des droits](#gestion-des-droits) ci-dessus), un administrateur doit cocher **Serveur d'outils directs**, dans **Autorisations des fonctionnalités**. Un serveur local n'est pas partageable.
 
 Seuls les administrateurs peuvent créer un serveur externe global. Pour être utilisés, des droits doivent être accordés dans les paramètres du serveur, via **Panneau d'administration** → **Réglages** → **Intégrations** → **External Tool Servers** → **Fenêtre serveur** → **Accès**.
+
+#### Installer un serveur (à rédiger)
+
+#### Installer un outil (à revoir)
+1. **Espaces de travail** → **Outils** → **New Tool**, coller le script, sauvegarder (le nom/la description du
+   docstring d'en-tête apparaissent dans la liste).
+2. Si une classe `UserValves` est définie : chaque utilisateur va dans ses **Réglages** personnels →
+   **Outils** → (nom de l'outil) pour renseigner ses propres valeurs (ex. identifiants personnels).
+3. Activer l'outil sur le modèle utilisé : fiche du modèle → onglet **Outils** → cocher l'outil.
+   Sans cette étape, l'outil existe mais n'est jamais proposé en conversation.
+4. Debug : les `print()` dans le code apparaissent dans les logs serveur d'Open WebUI (pas dans le
+   chat) ; toute chaîne retournée par une fonction est en revanche visible du modèle/utilisateur —
+   utile pour renvoyer des messages d'erreur explicites plutôt que de lever une exception brute.
 
 ## Fonctionnalités installées
 
@@ -273,7 +286,7 @@ La configuration des fonctionnalités, l'installation des dépendances et le lan
 
 *à rédiger*
 
-### MCP QGIS (serveur externe)
+### Utilisation QGIS (serveur externe)
 
 #### Principes
 
@@ -428,7 +441,7 @@ Beaucoup de réglages, exposés comme variables d'environnement (au lancement du
 Celui intègre un mécanisme de priorité : **valeur en base > variable d'environnement > valeur par défaut**. Dès qu'un administrateur modifie un réglage dans l'interface, Open WebUI écrit la nouvelle valeur dans la table `config`, qui prime définitivement sur la variable d'environnement correspondante, y compris après un redémarrage du conteneur avec une variable d'environnement différente. Pour repartir de la variable d'environnement, il faut d'abord effacer/réinitialiser le réglage correspondant côté interface (ou directement en base).
 
 ### Mécanisme de bind mount
-Docker intégre un mécanisme de bind mount (montage lié), permettant d'accéder aux données d'un conteneur directement depuis l'hôte (Merlin), sans commande `docker`, ce qui peut faciliter sa gestion.
+Docker intègre un mécanisme de bind mount (montage lié), permettant d'accéder aux données d'un conteneur directement depuis l'hôte (Merlin), sans commande `docker`, ce qui peut faciliter sa gestion.
 
 À l'installation, `-v open-webui:/app/backend/data` devient `-v /opt/open-webui/data:/app/backend/data` (`/opt/open-webui/data` est un exemple, le choix du répertoire est à définir).
 

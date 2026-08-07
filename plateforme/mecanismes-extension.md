@@ -1,4 +1,6 @@
+
 ## Dispositifs d'extension et contraintes de déploiement
+Vérifié le 07/08/2026 sur Open WebUI 0.10.2
 
 ### Quatre dispositifs
 L'ajout de fonctionnalités dans Open WebUI peut se faire via quatre dispositifs :
@@ -65,8 +67,14 @@ Enfin, si OpenWebUI est installé dans Docker, il faut noter que l'adresse http:
 ### À savoir sur les outils
 Qu'il soit installé par un utilisateur ou un administrateur, un outil (script python) tourne toujours côté serveur, pas côté navigateur. Il ne peut donc pas être utilisé pour interagir avec un logiciel tournant sur le PC utilisateur.
 
-Open WebUI intégre un mécanisme, les valves, consistant à permettre la configuration de certains paramètres d'outils partagés par les utilisateurs (par exemple des id et mots de passe).
+Open WebUI intègre un mécanisme, les `UserValves`, consistant à permettre la configuration de certains paramètres d'outils partagés par les utilisateurs (par exemple des id et mots de passe).
 
 Un outil n'étant pas isolé, son code s'exécute avec les mêmes accès que le processus Open WebUI (réseau, identifiants, fichiers), ceux du conteneur Docker s'il y en a un, ceux du serveur entier sinon. Le risque dépend donc de ce que fait chaque outil, sans protection propre à Open WebUI.
 
 ### Serveur vs Outils
+Selon les cas d'usages, il sera préférable de se tourner vers un outil ou vers un serveur. 
+
+En effet, faire tourner un serveur MCP dédié demande un certain effort de déploiement (processus externe, `mcpo`, port, supervision). Un outil python, avec le mécanisme  natif de configuration par utilisateur d'Open WebUI (`UserValves`), peut couvrir les mêmes besoins, à moindre effort, et avec plus d'agilité. 
+
+Toutefois, un outil n'a aucun garde-fou intégré (pas de blocage des
+requêtes destructrices, pas de limite de lignes, etc.), quand les MCP en proposent. 
