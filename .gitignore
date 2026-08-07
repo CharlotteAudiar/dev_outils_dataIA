@@ -3,7 +3,6 @@
 draft/
 old/
 *.pdf
-*.png
 
 # Variables d'environnement
 .env
