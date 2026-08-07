@@ -44,15 +44,54 @@ Plusieurs autres éléments – opportunités ou contraintes –, ont aussi infl
 
 Le détail sur les cas d'usages (CU) peut être consulté dans l'analyse fonctionnelle.
 
-| Composant | Cas d'usage | Outil retenu | Statut (03/08/2026) | Détail |
+| Composant | Cas d'usage | Outil retenu | Statut (06/08/2026) | Détail |
 |-----|----|------|------|--------|
 | Solution d'orchestration | CU1 à CU7 | Open WebUI v0.10.2 | Prototype local et Merlin créés  | Section « Solution d'orchestration » ci-dessous |
 | Accès base de données | CU1, CU2 et CU4 | outil python | Monté sur Merlin, à optimiser | outils-openwebui/explorateur-postgres/README.md |
 | Utilisation QGIS | CU5 | MCP local [nkarasiak/qgis-mcp](https://github.com/nkarasiak/qgis-mcp) | Configuré sur Merlin, en test | `docs/guides.md`, section « MCP QGIS (serveur externe) » |
-| Utilisation Excel | CU3 et CU4 | MCP [haris-musa/excel-mcp-server](https://github.com/haris-musa/excel-mcp-server) | À monter sur prototype local  |  |
+| Utilisation Excel | CU3 et CU4 | À l'étude |  |  |
 | Recherche web | CU4 | Brave, SearXNG et Tavily benchmarkés | À l'étude | `benchmark-techno.md` |
 :::
 
+### Schéma de déploiement
+
+```mermaid
+flowchart TB
+    subgraph AGENT["Poste de chaque chargé d'études (pilote 2-3 postes, cible ~15)"]
+        NAV["Navigateur<br/>(ouvre Open WebUI)"]
+        MCPOQ["mcpo :8001<br/>proxy local, lancé par l'agent"]
+        QGISS["qgis-mcp-server<br/>uvx, stdio"]
+        QGISD["QGIS Desktop<br/>+ plugin QGIS MCP"]
+    end
+
+    subgraph MERLIN["Merlin - serveur interne, Docker"]
+        OWUI["Open WebUI « Audiar »<br/>conteneur Docker<br/>srv-gitlab.audiar.net:8195"]
+        TOOL["Outil Python « explorateur BD »<br/>exécuté dans le backend"]
+    end
+
+    subgraph INFRA["Infrastructure existante"]
+        PG[("PostgreSQL - base sandbox<br/>tables bdsig via FDW")]
+    end
+
+    subgraph LLM["Fournisseurs de modèles - API distantes"]
+        API["Mistral, RAGaRenn,<br/>OVHcloud AI Endpoints"]
+    end
+
+    NAV -- "HTTP (chat)" --> OWUI
+    OWUI -- "HTTPS, protocole compatible OpenAI<br/>(clé API en Bearer)" --> API
+    OWUI -- "appel interne<br/>(pas de process externe)" --> TOOL
+    TOOL -- "identifiants personnels<br/>de chaque utilisateur" --> PG
+    NAV -. "Direct Tool Server<br/>(reste sur le poste,<br/>ne passe pas par Merlin)" .-> MCPOQ
+    MCPOQ -- stdio --> QGISS
+    QGISS -- "socket TCP" --> QGISD
+```
+
+**Légende**  
+
+| Trait | Signification |
+|---|---|
+| plein | appel HTTP/OpenAPI normal, ou appel interne à Open WebUI |
+| tirets fins | Direct Tool Server : l'appel part du navigateur et reste sur le poste |
 
 ## Solution d'orchestration
 
@@ -109,7 +148,6 @@ Ils se différencient selon quatre principaux critères :
 **Point de vigilance** :
 
 La licence Open WebUI n'est plus certifiée OSI (Open Source Initiative) depuis la v0.6.6 (BSD 3-Clause + clause de marque), passant de "open source" à "source disponible". Cela ne restreint pas l'usage mais un resserrement du modèle économique du projet (soutenabilité, monétisation possible) est à surveiller. Des discussions de fork ont déjà eu lieu dans la communauté à ce sujet, aucun fork dominant et pérenne ne s'est imposé à ce jour.
-
 
 ## Dispositifs d'extension et contraintes de déploiement
 
@@ -181,6 +219,9 @@ Qu'il soit installé par un utilisateur ou un administrateur, un outil (script p
 Open WebUI intégre un mécanisme, les valves, consistant à permettre la configuration de certains paramètres d'outils partagés par les utilisateurs (par exemple des id et mots de passe).
 
 Un outil n'étant pas isolé, son code s'exécute avec les mêmes accès que le processus Open WebUI (réseau, identifiants, fichiers), ceux du conteneur Docker s'il y en a un, ceux du serveur entier sinon. Le risque dépend donc de ce que fait chaque outil, sans protection propre à Open WebUI.
+
+### Serveur vs Outils
+
 
 
 ## Briques fonctionnelles
